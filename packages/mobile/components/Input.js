@@ -1,18 +1,25 @@
 import React from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 
-export default function Input({ caption, onChange }) {
+export default function Input({
+  caption,
+  onChange,
+  contentType,
+  keyboardType,
+  placeholder = "",
+  state,
+}) {
   return (
     <View style={{ display: "flex", justifyContent: "flex-start" }}>
       <Text style={styles.text}>{caption}</Text>
       <TextInput
         style={styles.input}
-        textContentType={"telephoneNumber"}
-        placeholder={"(763) 333 5096"}
+        textContentType={contentType}
+        placeholder={placeholder}
         placeholderTextColor={"#909090"}
         onChangeText={onChange}
-        value={phoneNumber}
-        keyboardType="numeric"
+        value={state}
+        keyboardType={keyboardType}
       />
     </View>
   );
@@ -26,7 +33,7 @@ const styles = StyleSheet.create({
   },
 
   input: {
-    width: 320,
+    width: "100%",
     height: 48,
     paddingHorizontal: 8,
     paddingVertical: 10,
