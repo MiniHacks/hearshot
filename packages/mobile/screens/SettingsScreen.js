@@ -42,6 +42,7 @@ export default function SettingsScreen() {
     flexDirection: "column",
     paddingVertical: 64,
     paddingHorizontal: 16,
+    backgroundColor: "#1C1C1E",
   };
 
   return (
