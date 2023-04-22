@@ -7,19 +7,21 @@ import {
   Pressable,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import auth from "@react-native-firebase/auth";
 
-// FIXME: should probably just do distance calculation in screen instead?
 export default function Notification({
-  title,
-  subtitle,
-  iconName,
-  coords,
-  selfCoords,
+  tagline,
+  location,
+  notifTime,
+  distance,
 }) {
-  const distance = 850;
-  const minAgo = 5;
-  const MAX_RECENCY = 10;
+  // FIXME: should probably just do calculation in screen instead?
+  const currentTime = new Date();
+  const MAX_RECENCY = 15;
+  const minDiff = () => {
+    const diff = Math.abs(currentTime.getTime() - notifTime.getTime());
+    return Math.floor(diff / (1000 * 60));
+  };
+
   return (
     <TouchableOpacity style={styles.container}>
       <View
@@ -29,8 +31,10 @@ export default function Notification({
           textAlignVertical: "center",
         }}
       >
-        <Text style={styles.detail}>10 min ago · 4:30 PM </Text>
-        {minAgo < MAX_RECENCY && (
+        <Text style={styles.detail}>
+          {minDiff()} min ago · {currentTime.toLocaleTimeString()}{" "}
+        </Text>
+        {minDiff() < MAX_RECENCY && (
           <MaterialCommunityIcons
             name="cast-audio-variant"
             color="#FF5F3E"
@@ -45,7 +49,7 @@ export default function Notification({
           marginVertical: 8,
         }}
       >
-        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.title}>{tagline}</Text>
         <Pressable
           style={styles.button}
           accessibilityLabel="Distance from event"
@@ -55,7 +59,7 @@ export default function Notification({
           </Text>
         </Pressable>
       </View>
-      <Text style={styles.subtitle}>{subtitle}</Text>
+      <Text style={styles.subtitle}>{location}</Text>
     </TouchableOpacity>
   );
 }
@@ -86,7 +90,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
-    height: "fit",
 
     backgroundColor: "#FF5F3E",
     borderRadius: 40,
