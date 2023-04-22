@@ -48,6 +48,11 @@ export const styles = StyleSheet.create({
     marginTop: 20,
   },
 
+  title: {
+    color: "#C7C7C7",
+    fontSize: 24,
+  },
+
   hr: {
     borderBottomColor: "#252525",
     borderBottomWidth: 1,

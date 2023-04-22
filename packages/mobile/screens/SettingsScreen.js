@@ -22,6 +22,7 @@ const supportSections = [
     title: "Github",
     subtitle: "View our code",
     iconName: "github",
+    link: "https://github.com/MiniHacks/hearshot",
   },
   {
     title: "Devpost",
@@ -40,13 +41,17 @@ export default function SettingsScreen() {
     display: "flex",
     flex: 1,
     flexDirection: "column",
-    justifyContent: "flex-start",
     paddingVertical: 64,
     paddingHorizontal: 16,
   };
 
   return (
     <View style={containerStyle}>
+      <View style={{ flexDirection: "row" }}>
+        <MaterialCommunityIcons name="chevron-left" color="#C7C7C7" size={28} />
+        <Text style={styles.title}>Settings</Text>
+      </View>
+
       <Text style={styles.heading}>General</Text>
       {generalSections.map((section, index) => (
         <>
@@ -75,6 +80,11 @@ export default function SettingsScreen() {
           )}
         </>
       ))}
+      <Text
+        style={{ color: "#C7C7C7", alignSelf: "center", textAlign: "center" }}
+      >
+        Developed by Samyok, Sasha, Mini, and Ritik for LAHacks 2023
+      </Text>
     </View>
   );
 }
