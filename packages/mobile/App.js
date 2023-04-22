@@ -10,6 +10,12 @@ import SplashScreen from "./screens/SplashScreen";
 
 const Stack = createStackNavigator();
 
+const forFade = ({ current }) => ({
+  cardStyle: {
+    opacity: current.progress,
+  },
+});
+
 function MyStack() {
   return (
     <Stack.Navigator
@@ -18,8 +24,16 @@ function MyStack() {
         gestureEnabled: false,
       }}
     >
-      <Stack.Screen name="Splash" component={SplashScreen} />
-      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen
+        name="Splash"
+        component={SplashScreen}
+        options={{ cardStyleInterpolator: forFade }}
+      />
+      <Stack.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{ cardStyleInterpolator: forFade }}
+      />
       <Stack.Screen
         name="Settings"
         component={SettingsScreen}

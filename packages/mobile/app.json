@@ -11,7 +11,11 @@
     },
     "ios": {
       "bundleIdentifier": "app.hearshot.app"
-    }
+    },
+    "plugins": [
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth"
+    ]
   },
   "name": "hearshot"
 }

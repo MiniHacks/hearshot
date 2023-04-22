@@ -1,9 +1,12 @@
-import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import React, { useEffect } from "react";
+import { Keyboard, Pressable, StyleSheet, Text, View } from "react-native";
 import ButtonTransparent from "../components/ButtonTransparent";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function HomeScreen({ navigation }) {
+  useEffect(() => {
+    Keyboard.dismiss();
+  }, [navigation]);
   // TODO: lol redundant styling
   // TODO: move to styles.js
   return (
