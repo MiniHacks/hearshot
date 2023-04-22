@@ -9,11 +9,13 @@ const generalSections = [
     title: "Past Notifications",
     subtitle: "See previous messages",
     iconName: "bell-badge-outline",
+    screen: "Notifications",
   },
   {
     title: "Filters",
     subtitle: "Get fewer notifications",
     iconName: "filter-outline",
+    screen: "Notifications",
   },
 ];
 
@@ -57,6 +59,7 @@ export default function SettingsScreen({ navigation }) {
             title={section.title}
             subtitle={section.subtitle}
             iconName={section.iconName}
+            onPress={() => navigation.navigate(section.screen)}
           />
           {index !== generalSections.length - 1 && (
             <View style={styles.hr}></View>

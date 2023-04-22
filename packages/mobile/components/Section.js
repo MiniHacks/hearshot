@@ -12,7 +12,9 @@ export default function Section({
   return (
     <TouchableOpacity
       onPress={() => {
-        Linking.openURL(link);
+        if (isExternalLink) {
+          Linking.openURL(link);
+        }
       }}
     >
       <View

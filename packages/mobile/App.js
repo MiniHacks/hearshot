@@ -7,6 +7,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import SettingsScreen from "./screens/SettingsScreen";
 import HomeScreen from "./screens/HomeScreen";
 import SplashScreen from "./screens/SplashScreen";
+import NotificationScreen from "./screens/NotificationScreen";
 
 const Stack = createStackNavigator();
 
@@ -41,6 +42,7 @@ function MyStack() {
           gestureEnabled: true,
         }}
       />
+      <Stack.Screen name="Notifications" component={NotificationScreen} />
     </Stack.Navigator>
   );
 }
