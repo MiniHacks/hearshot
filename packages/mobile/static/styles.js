@@ -10,7 +10,7 @@ export const globalStyles = StyleSheet.create({
     marginVertical: 8,
     fontSize: 16,
   },
-  image: {
+  center: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",

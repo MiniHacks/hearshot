@@ -28,7 +28,7 @@ export default function SplashScreen() {
       <ImageBackground
         source={SplashBackground}
         resizeMode="cover"
-        style={globalStyles.image}
+        style={globalStyles.center}
       >
         <Image
           style={{ marginTop: 30, marginBottom: 60 }}
