@@ -45,6 +45,10 @@ export default function SplashScreen({ navigation }) {
       // It is also recommended to display a message to the user informing him/her that he/she has successfully logged in.
       console.log("user logged in");
       navigation.navigate("Home");
+    } else {
+      console.log("user logged out");
+      setConfirm(null);
+      setPhoneNumber("");
     }
   }
 
@@ -129,9 +133,8 @@ export default function SplashScreen({ navigation }) {
           >
             <View style={{ display: "flex", justifyContent: "flex-start" }}>
               <Text style={styles.text}>Enter confirmation code</Text>
-
               <OTPInputView
-                style={{ width: "80%", height: 200 }}
+                style={{ width: "80%", height: 50, alignSelf: "center" }}
                 pinCount={6}
                 // code={this.state.code} //You can supply this prop or not. The component will be used as a controlled / uncontrolled component respectively.
                 // onCodeChanged = {code => { this.setState({code})}}

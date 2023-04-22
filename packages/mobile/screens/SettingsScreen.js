@@ -2,6 +2,7 @@ import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Section from "../components/Section";
+import auth from "@react-native-firebase/auth";
 
 const generalSections = [
   {
@@ -81,7 +82,10 @@ export default function SettingsScreen({ navigation }) {
         style={styles.button}
         title="Enter"
         accessibilityLabel="Enter a phone number"
-        onPress={() => {
+        onPress={async () => {
+          await auth().signOut();
+          console.log("Logged out");
+
           navigation.navigate("Splash");
         }}
       >

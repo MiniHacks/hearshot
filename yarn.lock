@@ -4464,6 +4464,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-firebase/messaging@npm:^17.4.2":
+  version: 17.4.2
+  resolution: "@react-native-firebase/messaging@npm:17.4.2"
+  peerDependencies:
+    "@react-native-firebase/app": 17.4.2
+  checksum: c89269be4395843acd75d89fe43990c254e62e6769d4e66a9a721be64069a55124b849051a46108efb6bb01e4685a2db131ad3c457b840a305e99d1395c8bfbd
+  languageName: node
+  linkType: hard
+
 "@react-native-masked-view/masked-view@npm:0.2.8":
   version: 0.2.8
   resolution: "@react-native-masked-view/masked-view@npm:0.2.8"
@@ -11576,6 +11585,7 @@ __metadata:
     "@expo/vector-icons": ^13.0.0
     "@react-native-firebase/app": ^17.4.2
     "@react-native-firebase/auth": ^17.4.2
+    "@react-native-firebase/messaging": ^17.4.2
     "@react-native-masked-view/masked-view": 0.2.8
     "@react-navigation/bottom-tabs": ^6.5.7
     "@react-navigation/native": ^6.1.6
