@@ -8,6 +8,7 @@ import SettingsScreen from "./screens/SettingsScreen";
 import HomeScreen from "./screens/HomeScreen";
 import SplashScreen from "./screens/SplashScreen";
 import NotificationScreen from "./screens/NotificationScreen";
+import FilterScreen from "./screens/FilterScreen";
 
 const Stack = createStackNavigator();
 
@@ -43,6 +44,7 @@ function MyStack() {
         }}
       />
       <Stack.Screen name="Notifications" component={NotificationScreen} />
+      <Stack.Screen name="Filters" component={FilterScreen} />
     </Stack.Navigator>
   );
 }

@@ -1,8 +1,8 @@
 import React from "react";
 import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Section from "../components/Section";
 import auth from "@react-native-firebase/auth";
+import Navigator from "../components/Navigator";
 
 const generalSections = [
   {
@@ -15,7 +15,7 @@ const generalSections = [
     title: "Filters",
     subtitle: "Get fewer notifications",
     iconName: "filter-outline",
-    link: "Notifications",
+    link: "Filters",
   },
 ];
 
@@ -43,13 +43,7 @@ const supportSections = [
 export default function SettingsScreen({ navigation }) {
   return (
     <View style={styles.container}>
-      <Pressable
-        style={{ flexDirection: "row" }}
-        onPress={() => navigation.pop()}
-      >
-        <MaterialCommunityIcons name="chevron-left" color="#C7C7C7" size={28} />
-        <Text style={styles.title}>Settings</Text>
-      </Pressable>
+      <Navigator navigation={navigation} pageName={"Settings"} />
 
       <Text style={styles.heading}>General</Text>
       {generalSections.map((section, index) => (
