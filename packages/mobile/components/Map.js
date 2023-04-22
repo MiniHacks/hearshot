@@ -73,9 +73,9 @@ const Map = React.forwardRef(
         // followsUserLocation={true}
         showsCompass={false}
         scrollEnabled={true}
-        zoomEnabled={false}
+        zoomEnabled={true}
         pitchEnabled={false}
-        rotateEnabled={false}
+        rotateEnabled={true}
         {...props}
       >
         {alerts.map((alert) => (
