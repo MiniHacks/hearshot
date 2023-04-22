@@ -4692,6 +4692,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/geojson@npm:^7946.0.10":
+  version: 7946.0.10
+  resolution: "@types/geojson@npm:7946.0.10"
+  checksum: 12c407c2dc93ecb26c08af533ee732f1506a9b29456616ba7ba1d525df96206c28ddf44a528f6a5415d7d22893e9d967420940a9c095ee5e539c1eba5fefc1f4
+  languageName: node
+  linkType: hard
+
 "@types/hammerjs@npm:^2.0.36":
   version: 2.0.41
   resolution: "@types/hammerjs@npm:2.0.41"
@@ -11443,6 +11450,7 @@ __metadata:
     react-native: 0.71.6
     react-native-collapsible: ^1.6.1
     react-native-gesture-handler: ~2.9.0
+    react-native-maps: ^1.6.0
     react-native-safe-area-context: ^4.5.1
   languageName: unknown
   linkType: soft
@@ -12867,6 +12875,22 @@ __metadata:
   version: 0.71.17
   resolution: "react-native-gradle-plugin@npm:0.71.17"
   checksum: 5ff996bafc3959a36551dc34d481cefb070ede4025b5eb2ce659f51adf74ba0e6845cc019ea1d547e0b4007f1c3c68146fa719688f09bde308f25320c6c6f834
+  languageName: node
+  linkType: hard
+
+"react-native-maps@npm:^1.6.0":
+  version: 1.6.0
+  resolution: "react-native-maps@npm:1.6.0"
+  dependencies:
+    "@types/geojson": ^7946.0.10
+  peerDependencies:
+    react: ">= 17.0.1"
+    react-native: ">= 0.64.3"
+    react-native-web: ">= 0.11"
+  peerDependenciesMeta:
+    react-native-web:
+      optional: true
+  checksum: 30c2f39ee3bb436a27a8c5534f73650588668c09c53f8fa4f0044ad3e766a32e3401610064a3e18fc893ce0ba802ce05ea1e075ba724574b128363bb3d6b56ca
   languageName: node
   linkType: hard
 

@@ -16,7 +16,7 @@ import Collapsible from "react-native-collapsible";
 import DismissKeyboardView from "../components/DismissKeyboardView";
 
 const logoHeight = 150;
-const logoWidth = 1.76623377 * logoHeight;
+const logoWidth = (1580 / 802) * logoHeight;
 export default function SplashScreen({ navigation }) {
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
