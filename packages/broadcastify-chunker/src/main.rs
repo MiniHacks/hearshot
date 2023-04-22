@@ -1,56 +1,90 @@
-use gst::{prelude::*, Bin, DebugGraphDetails, Pad};
+use std::mem::MaybeUninit;
+
+use gst::{prelude::*, Bin, DebugGraphDetails, Element, GhostPad, Pad};
 use gstreamer as gst;
 
+struct BroadcastifyToPcmOverUdp {
+    playbin: Element,
+    raw_audio_parse: Element,
+    udp_sink: Element,
+    sinkbin: gst::Bin,
+    sinkbin_sinkpad: gst::GhostPad,
+}
+
+impl BroadcastifyToPcmOverUdp {
+    fn initialize(
+        this: &mut MaybeUninit<Self>,
+        pipeline: &gst::Pipeline,
+        broadcastify_uri: impl AsRef<str>,
+        target_host: impl AsRef<str>,
+        udp_port: u16,
+    ) {
+        // Step 1a: Create all of our elements
+        let playbin = gst::ElementFactory::make("playbin")
+            .name("broadcastify_reader")
+            .property("uri", broadcastify_uri.as_ref())
+            .build()
+            .unwrap();
+
+        let sinkbin = gst::Bin::new(Some("my fave sink bin"));
+        let sinkbin_sinkpad = gst::GhostPad::new(Some("sink"), gst::PadDirection::Sink);
+
+        let raw_audio_parse = gst::ElementFactory::make("rawaudioparse")
+            .name("RAWWW AUDIOO PARSE")
+            .build()
+            .unwrap();
+        let udp_sink = gst::ElementFactory::make("udpsink")
+            .property("host", target_host.as_ref())
+            .property("port", udp_port as i32)
+            .build()
+            .unwrap();
+
+        // Step 1b: Put them in a place in memory where they won't cause lifetime issues
+        let this = this.write(Self {
+            playbin,
+            raw_audio_parse,
+            udp_sink,
+            sinkbin,
+            sinkbin_sinkpad,
+        });
+        let BroadcastifyToPcmOverUdp {
+            playbin,
+            raw_audio_parse,
+            udp_sink,
+            sinkbin,
+            sinkbin_sinkpad,
+        } = this;
+
+        // Step 2: Hook them all up!
+
+        // Tell the stream viewer to forward audio into our sinkbin
+        pipeline.add(playbin).unwrap();
+        playbin.set_property("audio-sink", sinkbin.upcast_ref::<Element>());
+
+        // Hook up the sinkbin's sink to the innards
+        sinkbin.add_many(&[raw_audio_parse, udp_sink]).unwrap();
+        sinkbin_sinkpad
+            .set_target(raw_audio_parse.static_pad("sink").as_ref())
+            .unwrap();
+        sinkbin.add_pad(sinkbin_sinkpad).unwrap();
+        raw_audio_parse.link(udp_sink).unwrap();
+    }
+}
 
 fn main() {
     // Initialize GStreamer
     gst::init().unwrap();
 
     let uri = "https://broadcastify.cdnstream1.com/26569";
+    let host = "127.0.0.1";
+    let port = 5555;
 
-    uwu(uri);
-
-    // let pipeline = gst::parse_launch(&format!("playbin uri={uri}")).unwrap();
-}
-
-fn uwu(uri: impl Into<String>) {
-    // Initialize GStreamer
-    gst::init().unwrap();
-
-    //// Build pipeline
+    // Build pipeline
     let pipeline = gst::Pipeline::new(None);
 
-    // Get the broadcastify stream from the internet
-    let filesrc = gst::ElementFactory::make("playbin")
-        .name("broadcastify_reader")
-        .property("uri", uri.into())
-        .build()
-        .unwrap();
-    pipeline.add_many(&[&filesrc]).unwrap();
+    let mut broadcastify = MaybeUninit::uninit();
+    BroadcastifyToPcmOverUdp::initialize(&mut broadcastify, &pipeline, uri, host, port);
 
-    // By default, `playbin` will attempt to use `alsasink` as its sink. 
-    // This is undesired -- we want to send PCM over UDP, so we create a bin to acheive this.
-    let sinkbin = gst::Bin::new(Some("my fave sink bin"));
-    filesrc.set_property("audio-sink", &sinkbin);
-
-    // TODO: remove because the audio is already raw
-    let rawaudioparse = gst::ElementFactory::make("rawaudioparse")
-        .name("RAWWW AUDIOO PARSE")
-        .build()
-        .unwrap();
-    let udp_sink = gst::ElementFactory::make("udpsink")
-        .property("host", "127.0.0.1")
-        .property("port", 5555)
-        .build()
-        .unwrap();
-    sinkbin.add_many(&[&rawaudioparse, &udp_sink]).unwrap();
-
-    let sinkbin_sinkpad =
-        gst::GhostPad::with_target(Some("sink"), &rawaudioparse.static_pad("sink").unwrap())
-            .unwrap();
-    sinkbin.add_pad(&sinkbin_sinkpad).unwrap();
-    rawaudioparse.link(&udp_sink).unwrap();
-    
     // Start pipeline
     pipeline.set_state(gst::State::Playing).unwrap();
 
@@ -70,11 +104,13 @@ fn uwu(uri: impl Into<String>) {
                 break;
             }
             _ => {
-                gst::debug_bin_to_dot_file(
-                    pipeline.upcast_ref::<Bin>(),
-                    DebugGraphDetails::ALL,
-                    "uwu.dot",
-                );
+                if cfg!(debug_assertions) {
+                    gst::debug_bin_to_dot_file(
+                        pipeline.upcast_ref::<Bin>(),
+                        DebugGraphDetails::ALL,
+                        "uwu.dot",
+                    );
+                }
             }
         }
     }
