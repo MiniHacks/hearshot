@@ -18,6 +18,7 @@ import DismissKeyboardView from "../components/DismissKeyboardView";
 import auth from "@react-native-firebase/auth";
 import OTPInputView from "@twotalltotems/react-native-otp-input";
 import messaging from "@react-native-firebase/messaging";
+import Input from "../components/Input";
 
 const phoneUtil = PNF.PhoneNumberUtil.getInstance();
 
@@ -111,18 +112,14 @@ export default function SplashScreen({ navigation }) {
           ></Image>
 
           <Collapsible collapsed={isTransitioning || confirm} duration={750}>
-            <View style={{ display: "flex", justifyContent: "flex-start" }}>
-              <Text style={styles.text}>Enter phone number</Text>
-              <TextInput
-                style={styles.input}
-                textContentType={"telephoneNumber"}
-                placeholder={"(763) 333 5096"}
-                placeholderTextColor={"#909090"}
-                onChangeText={(text) => setPhoneNumber(text)}
-                value={phoneNumber}
-                keyboardType="numeric"
-              />
-            </View>
+            <Input
+              caption={"Enter phone number"}
+              onChange={(text) => setPhoneNumber(text)}
+              contentType={"telephoneNumber"}
+              keyboardType={"numeric"}
+              placeholder={"(763) 333 5096"}
+              state={phoneNumber}
+            />
             <Pressable
               style={styles.button}
               title="Enter"

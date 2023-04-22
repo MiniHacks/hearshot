@@ -77,8 +77,6 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 24,
     fontWeight: "bold",
-    // marginTop: 4,
-    // marginBottom: 8,
   },
   subtitle: {
     color: "#C7C7C7",
