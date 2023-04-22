@@ -1,17 +1,17 @@
 {
   "expo": {
-    "name": "mobile",
-    "slug": "mobile",
+    "name": "Hearshot",
+    "slug": "hearshot",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"
     ],
     "android": {
-      "package": "com.minihacks.geese"
+      "package": "app.hearshot.app"
     },
     "ios": {
-      "bundleIdentifier": "com.minihacks.geese"
+      "bundleIdentifier": "app.hearshot.app"
     }
   },
-  "name": "mobile"
+  "name": "hearshot"
 }
