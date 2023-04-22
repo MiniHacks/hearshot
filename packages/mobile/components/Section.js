@@ -1,8 +1,6 @@
 import React from "react";
-import { Pressable, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
-import { styles } from "../static/styles";
 
 export default function Section({ title, subtitle, iconName, link }) {
   return (
