@@ -2,7 +2,12 @@ import React from "react";
 import { Pressable, Touchable } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-export default function ButtonTransparent({ hexBorder, rgbFill, iconName }) {
+export default function ButtonTransparent({
+  hexBorder,
+  rgbFill,
+  iconName,
+  ...props
+}) {
   return (
     <Pressable
       style={{
@@ -13,6 +18,7 @@ export default function ButtonTransparent({ hexBorder, rgbFill, iconName }) {
         borderRadius: 6,
         backgroundColor: rgbFill,
       }}
+      {...props}
     >
       <MaterialCommunityIcons name={iconName} color={hexBorder} size={28} />
     </Pressable>

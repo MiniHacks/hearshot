@@ -15,11 +15,18 @@ function MyStack() {
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
+        gestureEnabled: false,
       }}
     >
       <Stack.Screen name="Splash" component={SplashScreen} />
       <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="Settings" component={SettingsScreen} />
+      <Stack.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={{
+          gestureEnabled: true,
+        }}
+      />
     </Stack.Navigator>
   );
 }

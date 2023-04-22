@@ -35,7 +35,7 @@ const supportSections = [
   },
 ];
 
-export default function SettingsScreen() {
+export default function SettingsScreen({ navigation }) {
   const containerStyle = {
     display: "flex",
     flex: 1,
@@ -47,10 +47,13 @@ export default function SettingsScreen() {
 
   return (
     <View style={containerStyle}>
-      <View style={{ flexDirection: "row" }}>
+      <Pressable
+        style={{ flexDirection: "row" }}
+        onPress={() => navigation.pop()}
+      >
         <MaterialCommunityIcons name="chevron-left" color="#C7C7C7" size={28} />
         <Text style={styles.title}>Settings</Text>
-      </View>
+      </Pressable>
 
       <Text style={styles.heading}>General</Text>
       {generalSections.map((section, index) => (
@@ -68,7 +71,7 @@ export default function SettingsScreen() {
       ))}
       <Text style={styles.heading}>Support us</Text>
       {supportSections.map((section, index) => (
-        <>
+        <View key={section.title}>
           <Section
             key={section.title}
             title={section.title}
@@ -78,7 +81,7 @@ export default function SettingsScreen() {
           {index !== supportSections.length - 1 && (
             <View style={styles.hr}></View>
           )}
-        </>
+        </View>
       ))}
       <Text
         style={{ color: "#C7C7C7", alignSelf: "center", textAlign: "center" }}

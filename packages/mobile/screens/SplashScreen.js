@@ -8,14 +8,16 @@ import {
   Pressable,
   KeyboardAvoidingView,
   StyleSheet,
+  Platform,
 } from "react-native";
 import Logo from "../assets/logo-full.png";
 import SplashBackground from "../assets/splash-bkg.png";
 import Collapsible from "react-native-collapsible";
+import DismissKeyboardView from "../components/DismissKeyboardView";
 
 const logoHeight = 150;
 const logoWidth = 1.76623377 * logoHeight;
-export default function SplashScreen() {
+export default function SplashScreen({ navigation }) {
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     // TODO: this is just a delay to show the splash screen loading, lol
@@ -27,49 +29,53 @@ export default function SplashScreen() {
   }, []);
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }}>
-      <ImageBackground
-        source={SplashBackground}
-        resizeMode="cover"
-        style={styles.center}
-      >
-        <Image
-          style={{
-            marginTop: 30,
-            marginBottom: 40,
-            height: logoHeight,
-            width: logoWidth,
-          }}
-          source={Logo}
-        ></Image>
-
-        <Collapsible collapsed={isLoading} duration={750}>
-          <View style={{ display: "flex", justifyContent: "flex-start" }}>
-            <Text style={styles.text}>Enter phone number</Text>
-            <TextInput
-              style={styles.input}
-              textContentType={"telephoneNumber"}
-              placeholder={"(763) 333 5096"}
-              keyboardType="numeric"
-            />
-          </View>
-          <Pressable
-            style={styles.button}
-            title="Enter"
-            accessibilityLabel="Enter a phone number"
-            onPress={() => {
-              setIsLoading(true);
-              setTimeout(() => {
-                setIsLoading(false);
-              }, 2000);
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <DismissKeyboardView style={{ flex: 1 }}>
+        <ImageBackground
+          source={SplashBackground}
+          resizeMode="cover"
+          style={styles.center}
+        >
+          <Image
+            style={{
+              marginTop: 30,
+              marginBottom: 40,
+              height: logoHeight,
+              width: logoWidth,
             }}
-          >
-            <Text style={{ fontSize: 20, color: "white", fontWeight: "bold" }}>
-              Enter
-            </Text>
-          </Pressable>
-        </Collapsible>
-      </ImageBackground>
+            source={Logo}
+          ></Image>
+
+          <Collapsible collapsed={isLoading} duration={750}>
+            <View style={{ display: "flex", justifyContent: "flex-start" }}>
+              <Text style={styles.text}>Enter phone number</Text>
+              <TextInput
+                style={styles.input}
+                textContentType={"telephoneNumber"}
+                placeholder={"(763) 333 5096"}
+                keyboardType="numeric"
+              />
+            </View>
+            <Pressable
+              style={styles.button}
+              title="Enter"
+              accessibilityLabel="Enter a phone number"
+              onPress={() => {
+                navigation.navigate("Home");
+              }}
+            >
+              <Text
+                style={{ fontSize: 20, color: "white", fontWeight: "bold" }}
+              >
+                Enter
+              </Text>
+            </Pressable>
+          </Collapsible>
+        </ImageBackground>
+      </DismissKeyboardView>
     </KeyboardAvoidingView>
   );
 }

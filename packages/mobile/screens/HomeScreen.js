@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import ButtonTransparent from "../components/ButtonTransparent";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
   // TODO: lol redundant styling
   // TODO: move to styles.js
   return (
@@ -30,6 +30,7 @@ export default function HomeScreen() {
           hexBorder={"#FFFFFF"}
           rgbFill={"rgba(255, 255, 255, 0.1)"}
           iconName={"cog-outline"}
+          onPress={() => navigation.navigate("Settings")}
         />
         <Pressable
           style={{
