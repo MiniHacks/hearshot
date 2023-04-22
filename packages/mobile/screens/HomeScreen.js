@@ -70,8 +70,14 @@ export default function HomeScreen({ navigation }) {
       />
       <LinearGradient
         // Top Linear Gradient
-        colors={["rgba(0,0,0,1)", "rgba(0,0,0,.8438)", "rgba(0,0,0,0)"]}
-        locations={[0, 0.3, 1]}
+        colors={[
+          "rgba(0,0,0,1)",
+          "rgba(0,0,0,.8438)",
+          "rgba(0,0,0,.3438)",
+          "rgba(0,0,0,.17)",
+          "rgba(0,0,0,0)",
+        ]}
+        locations={[0, 0.3, 0.7, 0.8, 1]}
         style={{
           position: "absolute",
           left: 0,
