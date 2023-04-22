@@ -1,6 +1,5 @@
 import React from "react";
-import { Pressable, Text, View } from "react-native";
-import { styles } from "../static/styles";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Section from "../components/Section";
 
@@ -88,3 +87,24 @@ export default function SettingsScreen() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  heading: {
+    color: "white",
+    fontSize: 28,
+    fontWeight: "bold",
+    marginBottom: 12,
+    marginTop: 20,
+  },
+
+  title: {
+    color: "#C7C7C7",
+    fontSize: 24,
+  },
+
+  hr: {
+    borderBottomColor: "#252525",
+    borderBottomWidth: 1,
+    marginVertical: 10,
+  },
+});

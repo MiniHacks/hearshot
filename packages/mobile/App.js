@@ -6,13 +6,14 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { NavigationContainer } from "@react-navigation/native";
 import SettingsScreen from "./screens/SettingsScreen";
 import HomeScreen from "./screens/HomeScreen";
+import SplashScreen from "./screens/SplashScreen";
 
 const Tab = createBottomTabNavigator();
 
 function MyTabs() {
   return (
     <View style={{ flex: 1, backgroundColor: "#1C1C1E" }}>
-      <HomeScreen />
+      <SettingsScreen />
     </View>
   );
 }
