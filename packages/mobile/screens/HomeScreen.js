@@ -1,15 +1,17 @@
 import React from "react";
 import { Pressable, Text, View } from "react-native";
-import { globalStyles } from "../static/styles";
+import { styles } from "../static/styles";
+import ButtonTransparent from "../components/ButtonTransparent";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function HomeScreen() {
+  // TODO: lol redundant styling
+  // TODO: move to styles.js
   return (
     <View
       style={{
         flex: 1,
         flexDirection: "column",
-        backgroundColor: "#111113",
         paddingVertical: 64,
         justifyContent: "space-between",
         alignItems: "center",
@@ -25,22 +27,11 @@ export default function HomeScreen() {
           paddingHorizontal: 16,
         }}
       >
-        <Pressable
-          style={{
-            borderStyle: "solid",
-            borderWidth: 1,
-            borderColor: "white",
-            padding: 8,
-            borderRadius: 6,
-            backgroundColor: "rgba(255, 255, 255, 0.1)",
-          }}
-        >
-          <MaterialCommunityIcons
-            name="cog-outline"
-            color="#FFFFFF"
-            size={28}
-          />
-        </Pressable>
+        <ButtonTransparent
+          hexBorder={"#FFFFFF"}
+          rgbFill={"rgba(255, 255, 255, 0.1)"}
+          iconName={"cog-outline"}
+        />
         <Pressable
           style={{
             flexDirection: "row",
@@ -56,25 +47,14 @@ export default function HomeScreen() {
             My Location
           </Text>
         </Pressable>
-        <Pressable
-          style={{
-            borderStyle: "solid",
-            borderWidth: 1,
-            borderColor: "#FF2F0E",
-            padding: 8,
-            borderRadius: 6,
-            backgroundColor: "rgba(255, 47, 14, 0.1)",
-          }}
-        >
-          <MaterialCommunityIcons
-            name="radio-tower"
-            color="#FF2F0E"
-            size={28}
-          />
-        </Pressable>
+        <ButtonTransparent
+          hexBorder={"#FF2F0E"}
+          rgbFill={"rgba(255, 47, 14, 0.1)"}
+          iconName={"radio-tower"}
+        />
       </View>
-      <Text style={globalStyles.text}>insert epic map component here</Text>
-      <Text style={globalStyles.text}>5 recent alerts in this area</Text>
+      <Text style={styles.text}>insert epic map component here</Text>
+      <Text style={styles.text}>5 recent alerts in this area</Text>
     </View>
   );
 }

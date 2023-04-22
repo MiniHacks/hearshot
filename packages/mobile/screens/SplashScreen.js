@@ -8,7 +8,7 @@ import {
   Pressable,
   KeyboardAvoidingView,
 } from "react-native";
-import { globalStyles } from "../static/styles";
+import { styles } from "../static/styles";
 import Logo from "../static/images/logo.png";
 import SplashBackground from "../static/images/splash.png";
 
@@ -24,11 +24,11 @@ export default function SplashScreen() {
   }, []);
 
   return (
-    <KeyboardAvoidingView style={globalStyles.container}>
+    <KeyboardAvoidingView style={{ flex: 1 }}>
       <ImageBackground
         source={SplashBackground}
         resizeMode="cover"
-        style={globalStyles.center}
+        style={styles.center}
       >
         <Image
           style={{ marginTop: 30, marginBottom: 60 }}
@@ -38,16 +38,16 @@ export default function SplashScreen() {
         {!isLoading ? (
           <>
             <View style={{ display: "flex", justifyContent: "flex-start" }}>
-              <Text style={globalStyles.text}>Enter phone number</Text>
+              <Text style={styles.text}>Enter phone number</Text>
               <TextInput
-                style={globalStyles.input}
+                style={styles.input}
                 textContentType={"telephoneNumber"}
                 placeholder={"(763) 333 5096"}
                 keyboardType="numeric"
               />
             </View>
             <Pressable
-              style={globalStyles.button}
+              style={styles.button}
               title="Enter"
               accessibilityLabel="Enter a phone number"
             >
