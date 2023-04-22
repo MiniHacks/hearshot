@@ -1,20 +1,65 @@
-import React, { useEffect } from "react";
-import { Keyboard, Pressable, StyleSheet, Text, View } from "react-native";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import {
+  Button,
+  Keyboard,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import ButtonTransparent from "../components/ButtonTransparent";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import notifee from "@notifee/react-native";
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
+import * as Location from "expo-location";
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import mapStyles from "../static/mapstyles.json";
 import { LinearGradient } from "expo-linear-gradient";
+import Map from "../components/Map";
+import BottomSheet from "@gorhom/bottom-sheet";
 
 export default function HomeScreen({ navigation }) {
   useEffect(() => {
     Keyboard.dismiss();
   }, [navigation]);
+
+  // ref
+  const bottomSheetRef = useRef(null);
+
+  const [activeAlert, setActiveAlert] = useState(null);
+
+  // variables
+  const snapPoints = useMemo(() => ["25%", "80%"], []);
+
+  // callbacks
+  const handleSheetChanges = useCallback((index) => {
+    console.log("handleSheetChanges", index);
+  }, []);
+
+  const mapRef = useRef(null);
+
+  const [location, setLocation] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+      console.log("Location", location);
+    })();
+  }, []);
 
   const insets = useSafeAreaInsets();
 
@@ -43,6 +88,10 @@ export default function HomeScreen({ navigation }) {
     });
   }
 
+  const snapTo = useCallback((index) => {
+    bottomSheetRef.current.snapToIndex(index);
+  }, []);
+
   // TODO: lol redundant styling
   // TODO: move to styles.js
   return (
@@ -51,23 +100,7 @@ export default function HomeScreen({ navigation }) {
         height: "100%",
       }}
     >
-      <MapView
-        provider={PROVIDER_GOOGLE}
-        style={{
-          width: "100%",
-          height: "100%",
-          position: "absolute",
-          zIndex: -1,
-        }}
-        customMapStyle={mapStyles}
-        userInterfaceStyle={"dark"}
-        initialRegion={{
-          latitude: 37.78825,
-          longitude: -122.4324,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-      />
+      <Map ref={mapRef} snapTo={snapTo} setActiveAlert={setActiveAlert} />
       <LinearGradient
         // Top Linear Gradient
         colors={[
@@ -148,9 +181,28 @@ export default function HomeScreen({ navigation }) {
           width: "100%",
           alignItems: "center",
         }}
+        pointerEvents={"none"}
       >
         <Text style={styles.text}>5 recent alerts in this area</Text>
       </SafeAreaView>
+      <BottomSheet
+        ref={bottomSheetRef}
+        index={0}
+        snapPoints={snapPoints}
+        onChange={handleSheetChanges}
+        enablePanDownToClose
+      >
+        <View style={styles.contentContainer}>
+          <Text>{JSON.stringify(activeAlert)}</Text>
+          <Button
+            title={"Close"}
+            onPress={() => {
+              bottomSheetRef.current.close();
+              setActiveAlert(null);
+            }}
+          />
+        </View>
+      </BottomSheet>
     </View>
   );
 }
@@ -160,5 +212,14 @@ const styles = StyleSheet.create({
     color: "#C7C7C7",
     marginVertical: 8,
     fontSize: 16,
+  },
+  container: {
+    flex: 1,
+    padding: 24,
+    backgroundColor: "grey",
+  },
+  contentContainer: {
+    flex: 1,
+    alignItems: "center",
   },
 });
