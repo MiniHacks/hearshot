@@ -4,13 +4,19 @@ import ButtonTransparent from "../components/ButtonTransparent";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import notifee from "@notifee/react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import mapStyles from "../static/mapstyles.json";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function HomeScreen({ navigation }) {
   useEffect(() => {
     Keyboard.dismiss();
   }, [navigation]);
+
+  const insets = useSafeAreaInsets();
 
   async function onDisplayNotification() {
     // Request permissions (required for iOS)
@@ -61,6 +67,32 @@ export default function HomeScreen({ navigation }) {
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
+      />
+      <LinearGradient
+        // Top Linear Gradient
+        colors={["rgba(0,0,0,1)", "rgba(0,0,0,.8438)", "rgba(0,0,0,0)"]}
+        locations={[0, 0.3, 1]}
+        style={{
+          position: "absolute",
+          left: 0,
+          right: 0,
+          top: 0,
+          height: insets.top + 100,
+        }}
+        pointerEvents={"none"}
+      />
+      <LinearGradient
+        // Top Linear Gradient
+        colors={["rgba(0,0,0,.95)", "rgba(0,0,0,.7438)", "rgba(0,0,0,0)"]}
+        locations={[1, 0.5, 0]}
+        style={{
+          position: "absolute",
+          left: 0,
+          right: 0,
+          bottom: 0,
+          height: insets.bottom + 70,
+        }}
+        pointerEvents={"none"}
       />
       <SafeAreaView
         style={{
