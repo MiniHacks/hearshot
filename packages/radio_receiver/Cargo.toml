@@ -6,4 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+num = "*"
 rtlsdr_mt = { git = "https://github.com/kchmck/rtlsdr_mt.rs.git", branch = "master" }
+babycat = "*"
+
+[dependencies.liquid_dsp]
+git = "https://github.com/cubehub/rust-liquid-dsp.git"
