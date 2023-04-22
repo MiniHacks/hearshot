@@ -1,22 +1,36 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  ImageBackground,
   Image,
-  Text,
-  View,
-  TextInput,
-  Pressable,
+  ImageBackground,
   KeyboardAvoidingView,
-  StyleSheet,
   Platform,
-  Keyboard,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
+import * as PNF from "google-libphonenumber";
 import Logo from "../assets/logo-full.png";
 import SplashBackground from "../assets/splash-bkg.png";
 import Collapsible from "react-native-collapsible";
 import DismissKeyboardView from "../components/DismissKeyboardView";
 import auth from "@react-native-firebase/auth";
 import OTPInputView from "@twotalltotems/react-native-otp-input";
+import messaging from "@react-native-firebase/messaging";
+
+const phoneUtil = PNF.PhoneNumberUtil.getInstance();
+
+async function requestUserPermission() {
+  const authStatus = await messaging().requestPermission();
+  const enabled =
+    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+    authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+  if (enabled) {
+    console.log("Authorization status:", authStatus);
+  }
+}
 
 const logoHeight = 150;
 const logoWidth = (1580 / 802) * logoHeight;
@@ -37,13 +51,14 @@ export default function SplashScreen({ navigation }) {
   const [confirm, setConfirm] = useState(null);
 
   // Handle login
-  function onAuthStateChanged(user) {
+  async function onAuthStateChanged(user) {
     if (user) {
       // Some Android devices can automatically process the verification code (OTP) message, and the user would NOT need to enter the code.
       // Actually, if he/she tries to enter it, he/she will get an error message because the code was already used in the background.
       // In this function, make sure you hide the component(s) for entering the code and/or navigate away from this screen.
       // It is also recommended to display a message to the user informing him/her that he/she has successfully logged in.
       console.log("user logged in");
+      await requestUserPermission();
       navigation.navigate("Home");
     } else {
       console.log("user logged out");
@@ -53,8 +68,7 @@ export default function SplashScreen({ navigation }) {
   }
 
   useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber; // unsubscribe on unmount
+    return auth().onAuthStateChanged(onAuthStateChanged); // unsubscribe on unmount
   }, []);
 
   // Handle the button press
@@ -114,8 +128,47 @@ export default function SplashScreen({ navigation }) {
               accessibilityLabel="Enter a phone number"
               onPress={async () => {
                 setIsLoading(true);
-                await signInWithPhoneNumber(phoneNumber);
+                let formattedNumber = "";
+
+                try {
+                  // validate phone number
+
+                  const pn = phoneUtil.parse(phoneNumber, "US");
+
+                  formattedNumber = phoneUtil.format(
+                    pn,
+                    PNF.PhoneNumberFormat.E164
+                  );
+
+                  if (!phoneUtil.isValidNumber(pn)) {
+                    console.log("invalid number");
+                    throw new Error("invalid number");
+                  }
+
+                  setPhoneNumber(formattedNumber);
+
+                  console.log("formattedNumber: " + formattedNumber);
+                } catch (error) {
+                  console.log("error: " + error);
+                  alert("Please enter a valid phone number");
+                  setIsLoading(false);
+                  return;
+                }
+                if (
+                  !phoneUtil.isValidNumber(phoneUtil.parse(phoneNumber, "US"))
+                ) {
+                  alert("Please enter a valid phone number");
+                  setIsLoading(false);
+                  return;
+                }
+                console.log(
+                  phoneUtil.isValidNumber(phoneUtil.parse(phoneNumber, "US"))
+                );
                 setIsLoading(false);
+
+                await signInWithPhoneNumber(formattedNumber);
+                setIsLoading(false);
+                setPhoneNumber("");
               }}
             >
               <Text
