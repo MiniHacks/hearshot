@@ -27,26 +27,19 @@ const supportSections = [
     title: "Devpost",
     subtitle: "Leave a like!",
     iconName: "routes",
+    link: "https://devpost.com/software/hearshot",
   },
   {
     title: "Feedback",
     subtitle: "Drop us a line",
     iconName: "comment-quote-outline",
+    link: "https://google.com",
   },
 ];
 
 export default function SettingsScreen({ navigation }) {
-  const containerStyle = {
-    display: "flex",
-    flex: 1,
-    flexDirection: "column",
-    paddingVertical: 64,
-    paddingHorizontal: 16,
-    backgroundColor: "#1C1C1E",
-  };
-
   return (
-    <View style={containerStyle}>
+    <View style={styles.container}>
       <Pressable
         style={{ flexDirection: "row" }}
         onPress={() => navigation.pop()}
@@ -77,22 +70,44 @@ export default function SettingsScreen({ navigation }) {
             title={section.title}
             subtitle={section.subtitle}
             iconName={section.iconName}
+            link={section.link}
           />
           {index !== supportSections.length - 1 && (
             <View style={styles.hr}></View>
           )}
         </View>
       ))}
+      <Pressable
+        style={styles.button}
+        title="Enter"
+        accessibilityLabel="Enter a phone number"
+        onPress={() => {
+          navigation.navigate("Splash");
+        }}
+      >
+        <Text style={{ fontSize: 20, color: "white", fontWeight: "bold" }}>
+          Logout
+        </Text>
+      </Pressable>
       <Text
         style={{ color: "#C7C7C7", alignSelf: "center", textAlign: "center" }}
       >
-        Developed by Samyok, Sasha, Mini, and Ritik for LAHacks 2023
+        Developed by Samyok, Sasha, Minnerva, and Ritik for LAHacks 2023
       </Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    display: "flex",
+    flex: 1,
+    flexDirection: "column",
+    paddingVertical: 64,
+    paddingHorizontal: 16,
+    backgroundColor: "#1C1C1E",
+  },
+
   heading: {
     color: "white",
     fontSize: 28,
@@ -110,5 +125,19 @@ const styles = StyleSheet.create({
     borderBottomColor: "#252525",
     borderBottomWidth: 1,
     marginVertical: 10,
+  },
+
+  button: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+    marginVertical: 16,
+    width: 320,
+    height: 48,
+
+    backgroundColor: "#FF5F3E",
+    borderRadius: 40,
   },
 });
