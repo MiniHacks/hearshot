@@ -1,6 +1,5 @@
 import React from "react";
-import { Pressable, Text, View } from "react-native";
-import { styles } from "../static/styles";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import ButtonTransparent from "../components/ButtonTransparent";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -58,3 +57,11 @@ export default function HomeScreen() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  text: {
+    color: "#C7C7C7",
+    marginVertical: 8,
+    fontSize: 16,
+  },
+});

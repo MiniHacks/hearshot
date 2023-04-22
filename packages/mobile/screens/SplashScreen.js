@@ -62,7 +62,6 @@ export default function SplashScreen() {
           <></>
         )}
       </ImageBackground>
-      {/*<Text style={globalStyles.text}>lol this is some text</Text>*/}
     </KeyboardAvoidingView>
   );
 }
