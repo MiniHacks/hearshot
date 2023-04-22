@@ -12,3 +12,6 @@ babycat = "*"
 
 [dependencies.liquid_dsp]
 git = "https://github.com/cubehub/rust-liquid-dsp.git"
+
+[profiles.release]
+lto = "fat"
