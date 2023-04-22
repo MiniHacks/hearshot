@@ -456,6 +456,11 @@ PODS:
     - RNFBApp
   - RNGestureHandler (2.9.0):
     - React-Core
+  - RNNotifee (7.7.1):
+    - React-Core
+    - RNNotifee/NotifeeCore (= 7.7.1)
+  - RNNotifee/NotifeeCore (7.7.1):
+    - React-Core
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -509,6 +514,7 @@ DEPENDENCIES:
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
   - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - "RNNotifee (from `../node_modules/@notifee/react-native`)"
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -625,6 +631,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/messaging"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNNotifee:
+    :path: "../node_modules/@notifee/react-native"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -691,6 +699,7 @@ SPEC CHECKSUMS:
   RNFBAuth: d30acc0f5f169bc28c7fcbf1b45cd061cc647590
   RNFBMessaging: d365361650cc697294227e1280923f35a31d2501
   RNGestureHandler: 071d7a9ad81e8b83fe7663b303d132406a7d8f39
+  RNNotifee: 05692d7bb42b6c718a3906aeb8431c48ff2e8097
   Yoga: ba09b6b11e6139e3df8229238aa794205ca6a02a
 
 PODFILE CHECKSUM: 088fae1191c85221d3bf215309a0bb57c1080782

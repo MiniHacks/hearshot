@@ -61,3 +61,5 @@ __pycache__
 
 packages/io/dist/
 **/dist/**
+
+**/service-account.json
