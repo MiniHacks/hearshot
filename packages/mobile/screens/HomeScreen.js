@@ -3,6 +3,9 @@ import { Keyboard, Pressable, StyleSheet, Text, View } from "react-native";
 import ButtonTransparent from "../components/ButtonTransparent";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import notifee from "@notifee/react-native";
+import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
+import { SafeAreaView } from "react-native-safe-area-context";
+import mapStyles from "../static/mapstyles.json";
 
 export default function HomeScreen({ navigation }) {
   useEffect(() => {
@@ -39,14 +42,27 @@ export default function HomeScreen({ navigation }) {
   return (
     <View
       style={{
-        flex: 1,
-        flexDirection: "column",
-        paddingVertical: 64,
-        justifyContent: "space-between",
-        alignItems: "center",
+        height: "100%",
       }}
     >
-      <View
+      <MapView
+        provider={PROVIDER_GOOGLE}
+        style={{
+          width: "100%",
+          height: "100%",
+          position: "absolute",
+          zIndex: -1,
+        }}
+        customMapStyle={mapStyles}
+        userInterfaceStyle={"dark"}
+        initialRegion={{
+          latitude: 37.78825,
+          longitude: -122.4324,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        }}
+      />
+      <SafeAreaView
         style={{
           display: "flex",
           flexDirection: "row",
@@ -54,6 +70,8 @@ export default function HomeScreen({ navigation }) {
           alignItems: "center",
           width: "100%",
           paddingHorizontal: 16,
+          // top: 0,
+          // zIndex: 1,
         }}
       >
         <ButtonTransparent
@@ -83,9 +101,18 @@ export default function HomeScreen({ navigation }) {
           iconName={"radio-tower"}
           onPress={onDisplayNotification}
         />
-      </View>
-      <Text style={styles.text}>insert epic map component here</Text>
-      <Text style={styles.text}>5 recent alerts in this area</Text>
+      </SafeAreaView>
+
+      <SafeAreaView
+        style={{
+          position: "absolute",
+          bottom: 0,
+          width: "100%",
+          alignItems: "center",
+        }}
+      >
+        <Text style={styles.text}>5 recent alerts in this area</Text>
+      </SafeAreaView>
     </View>
   );
 }
