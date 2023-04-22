@@ -1,7 +1,8 @@
-use std::mem::MaybeUninit;
+use std::{mem::MaybeUninit, sync::atomic::AtomicUsize};
 
 use gst::{prelude::*, Bin, DebugGraphDetails, Element, GhostPad, Pad};
 use gstreamer as gst;
+use serde::{Deserialize, Serialize};
 
 struct BroadcastifyToPcmOverUdp {
     playbin: Element,
@@ -19,14 +20,16 @@ impl BroadcastifyToPcmOverUdp {
         target_host: impl AsRef<str>,
         udp_port: u16,
     ) {
+        static COUNT: AtomicUsize = AtomicUsize::new(0);
+        let i = COUNT.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
         // Step 1a: Create all of our elements
         let playbin = gst::ElementFactory::make("playbin")
-            .name("broadcastify_reader")
+            .name(format!("broadcastify_reader{i}",))
             .property("uri", broadcastify_uri.as_ref())
             .build()
             .unwrap();
 
-        let sinkbin = gst::Bin::new(Some("my fave sink bin"));
+        let sinkbin = gst::Bin::new(Some(format!("my fave sink bin{i}").as_str()));
         let sinkbin_sinkpad = gst::GhostPad::new(Some("sink"), gst::PadDirection::Sink);
 
         let raw_audio_parse = gst::ElementFactory::make("rawaudioparse")
@@ -71,19 +74,52 @@ impl BroadcastifyToPcmOverUdp {
     }
 }
 
+#[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+struct Broadcast {
+    uri: String,
+    host: String,
+    port: u16,
+}
+
 fn main() {
     // Initialize GStreamer
     gst::init().unwrap();
 
-    let uri = "https://broadcastify.cdnstream1.com/26569";
-    let host = "127.0.0.1";
-    let port = 5555;
+    let streams = std::env::args()
+        .nth(2)
+        .map(|filepath| serde_json::from_reader(std::fs::File::open(filepath).unwrap()).unwrap())
+        .unwrap_or_else(|| {
+            vec![
+                Broadcast {
+                    uri: "https://broadcastify.cdnstream1.com/33623".into(),
+                    host: "127.0.0.1".into(),
+                    port: 5556,
+                },
+                Broadcast {
+                    uri: "https://broadcastify.cdnstream1.com/26569".into(),
+                    host: "127.0.0.1".into(),
+                    port: 5555,
+                },
+            ]
+        });
+
+    println!("{}", serde_json::to_string_pretty(&streams).unwrap());
 
     // Build pipeline
     let pipeline = gst::Pipeline::new(None);
 
-    let mut broadcastify = MaybeUninit::uninit();
-    BroadcastifyToPcmOverUdp::initialize(&mut broadcastify, &pipeline, uri, host, port);
+    let mut pipeline_components = {
+        let mut v = Vec::with_capacity(streams.len());
+        // SAFETY: It is okay for the `MaybeUninit`s to be uninit, and we have allocated enough space to do this
+        unsafe { v.set_len(streams.len()) };
+        v
+    };
+
+    for (out, Broadcast { uri, host, port }) in
+        Iterator::zip(pipeline_components.iter_mut(), streams)
+    {
+        BroadcastifyToPcmOverUdp::initialize(out, &pipeline, uri, host, port);
+    }
 
     // Start pipeline
     pipeline.set_state(gst::State::Playing).unwrap();
