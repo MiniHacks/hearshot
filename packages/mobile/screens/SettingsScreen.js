@@ -2,7 +2,7 @@ import React from "react";
 import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
 import Section from "../components/Section";
 import auth from "@react-native-firebase/auth";
-import Navigator from "../components/Navigator";
+import Breadcrumb from "../components/Breadcrumb";
 
 const generalSections = [
   {
@@ -43,7 +43,7 @@ const supportSections = [
 export default function SettingsScreen({ navigation }) {
   return (
     <View style={styles.container}>
-      <Navigator navigation={navigation} pageName={"Settings"} />
+      <Breadcrumb navigation={navigation} pageName={"Settings"} />
 
       <Text style={styles.heading}>General</Text>
       {generalSections.map((section, index) => (

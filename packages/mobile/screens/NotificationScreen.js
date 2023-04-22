@@ -2,7 +2,7 @@ import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Notification from "../components/Notification";
-import Navigator from "../components/Navigator";
+import Breadcrumb from "../components/Breadcrumb";
 
 // TODO: dummy data stuff; replace when we actually get data.
 function generateRandomDate() {
@@ -48,7 +48,7 @@ const notifications = [
 export default function NotificationScreen({ navigation }) {
   return (
     <View style={styles.container}>
-      <Navigator navigation={navigation} pageName={"Notifications"} />
+      <Breadcrumb navigation={navigation} pageName={"Notifications"} />
 
       {notifications
         .slice()

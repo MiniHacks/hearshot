@@ -1,11 +1,10 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import Navigator from "../components/Navigator";
+import Breadcrumb from "../components/Breadcrumb";
 
 export default function FilterScreen({ navigation }) {
   return (
     <View style={styles.container}>
-      <Navigator navigation={navigation} pageName={"Filters"} />
+      <Breadcrumb navigation={navigation} pageName={"Filters"} />
     </View>
   );
 }

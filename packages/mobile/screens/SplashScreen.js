@@ -18,7 +18,6 @@ import DismissKeyboardView from "../components/DismissKeyboardView";
 import auth from "@react-native-firebase/auth";
 import OTPInputView from "@twotalltotems/react-native-otp-input";
 import messaging from "@react-native-firebase/messaging";
-import notifee from "@notifee/react-native";
 
 const phoneUtil = PNF.PhoneNumberUtil.getInstance();
 
