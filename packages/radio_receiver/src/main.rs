@@ -1,9 +1,18 @@
 use std::io::Write;
+use std::net::{Ipv4Addr, UdpSocket};
 
 fn main() {
+    let mut raw_samples_socket = (|| {
+        let mut sock = UdpSocket::bind("0.0.0.0:5678")?;
+        sock.set_broadcast(true)?;
+        sock.connect((Ipv4Addr::BROADCAST, 5678))?;
+        Ok::<_, std::io::Error>(sock)
+    })()
+    .expect("Could not set up UDP socket :(");
+
     let (mut ctl, mut reader) = rtlsdr_mt::open(0).unwrap();
 
-    let mut file = std::fs::File::create("out.raw").unwrap();
+    // let mut file = std::fs::File::create("out.raw").unwrap();
 
     ctl.enable_agc().unwrap();
     ctl.set_ppm(0).unwrap();
@@ -32,13 +41,14 @@ fn main() {
                 },
             );
 
-            file.write_all({
+            let send_buf = {
                 let num_bytes = audio_floats.len() * core::mem::size_of::<f32>();
                 let data_ptr = audio_floats.as_ptr().cast::<u8>();
-                unsafe { 
-                    core::slice::from_raw_parts(data_ptr, num_bytes)
-                }
-            }).unwrap();
+                unsafe { core::slice::from_raw_parts(data_ptr, num_bytes) }
+            };
+            if let Some(e) = raw_samples_socket.send(send_buf).err() {
+                eprintln!("send error: {e:?}");
+            }
         })
         .unwrap();
 }
