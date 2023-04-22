@@ -1,5 +1,5 @@
 import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Section from "../components/Section";
 import auth from "@react-native-firebase/auth";
@@ -9,13 +9,13 @@ const generalSections = [
     title: "Past Notifications",
     subtitle: "See previous messages",
     iconName: "bell-badge-outline",
-    screen: "Notifications",
+    link: "Notifications",
   },
   {
     title: "Filters",
     subtitle: "Get fewer notifications",
     iconName: "filter-outline",
-    screen: "Notifications",
+    link: "Notifications",
   },
 ];
 
@@ -59,7 +59,8 @@ export default function SettingsScreen({ navigation }) {
             title={section.title}
             subtitle={section.subtitle}
             iconName={section.iconName}
-            onPress={() => navigation.navigate(section.screen)}
+            link={section.link}
+            onPress={() => navigation.navigate(section.link)}
           />
           {index !== generalSections.length - 1 && (
             <View style={styles.hr}></View>
@@ -74,7 +75,7 @@ export default function SettingsScreen({ navigation }) {
             title={section.title}
             subtitle={section.subtitle}
             iconName={section.iconName}
-            link={section.link}
+            onPress={() => Linking.openURL(section.link)}
           />
           {index !== supportSections.length - 1 && (
             <View style={styles.hr}></View>

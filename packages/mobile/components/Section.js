@@ -1,22 +1,10 @@
 import React from "react";
-import { Linking, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-export default function Section({
-  title,
-  subtitle,
-  iconName,
-  link,
-  isExternalLink = false,
-}) {
+export default function Section({ title, subtitle, iconName, ...props }) {
   return (
-    <TouchableOpacity
-      onPress={() => {
-        if (isExternalLink) {
-          Linking.openURL(link);
-        }
-      }}
-    >
+    <TouchableOpacity {...props}>
       <View
         style={{
           display: "flex",

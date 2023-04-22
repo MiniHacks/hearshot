@@ -5,14 +5,12 @@ import Notification from "../components/Notification";
 
 const notifications = [
   {
-    title: "Past Notifications",
-    subtitle: "See previous messages",
-    iconName: "bell-badge-outline",
+    title: "Reported Gunshots",
+    subtitle: "Middlebrook Hall",
   },
   {
-    title: "Filters",
-    subtitle: "Get fewer notifications",
-    iconName: "filter-outline",
+    title: "Fire on 2nd Floor",
+    subtitle: "Keller Hall",
   },
 ];
 export default function NotificationScreen({ navigation }) {
@@ -26,9 +24,16 @@ export default function NotificationScreen({ navigation }) {
         <Text style={styles.title}>Notifications</Text>
       </Pressable>
 
-      {notifications.map((section, index) => (
-        <View key={notifications.title}>
-          <Notification />
+      {notifications.map((notif, index) => (
+        <View key={notif.title}>
+          <Notification
+            title={notif.title}
+            subtitle={notif.subtitle}
+            iconName={notif.iconName}
+          />
+          {index !== notifications.length - 1 && (
+            <View style={styles.hr}></View>
+          )}
         </View>
       ))}
     </View>
