@@ -30,6 +30,7 @@ def recv_bytes(data_queue):
 
 def transcribe(data_queue):
     finished = [""]
+    temp_file = NamedTemporaryFile().name
     model = "small.en"
     audio_model = whisper.load_model(model)
 
@@ -55,12 +56,11 @@ def transcribe(data_queue):
             audio_data = sr.AudioData(last_sample, 16_000, 2)
             wav_data = io.BytesIO(audio_data.get_wav_data())
 
-            with open("temp.wav", "w+b") as f:
+            with open(temp_file, "w+b") as f:
                 f.write(wav_data.read())
 
-            result = audio_model.transcribe("temp.wav", fp16=torch.cuda.is_available())
+            result = audio_model.transcribe(temp_file, fp16=torch.cuda.is_available())
             text = result["text"].strip()
-            print(f"Phrase update: {text}")
 
             if phrase_complete:
                 finished.append(text)
