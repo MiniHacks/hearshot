@@ -1,4 +1,4 @@
-# Hearshot
+Hearshot
 
 *avoid accidentally walking into an active shooter situation!*
 
@@ -18,8 +18,18 @@ flowchart TD
     dsp2 -- resampled 16kHz audio --> udp_police;
   end;
   
-  udp_police --> udp_transcribe;
+  subgraph Broadcastify Ingestion Service
+    bcast[Broadcastify];
+    gst[GStreamer pipeline in Rust];
+    udp_bcast[UDP Socket];
+    
+    bcast -- Hobbyist-maintained stream of police chatter --> gst;
+    gst -- Conversion from an `application/x-icy` stream to 16xHz S16LE audio samples --> udp_bcast;
+    udp_bcast --> udp_transcribe;
+  end;
   
+  udp_police --> udp_transcribe;
+ 
   
   
   subgraph a[Transcription Service];
