@@ -7,10 +7,12 @@ from queue import Queue
 from tempfile import NamedTemporaryFile
 import speech_recognition as sr
 import torch
-import whisper
+import wave
+import soundfile as sf
 import threading
 from datetime import datetime, timedelta
 from transcribe import transcribe
+import torchaudio
 
 localhost = "127.0.0.1"
 SAMPLE_RATE = 16_000
@@ -24,13 +26,24 @@ silero_model, utils = torch.hub.load(
     force_reload=False,
     onnx=USE_ONNX,
 )
-(get_speech_timestamps, save_audio, read_audio, VADIterator, collect_chunks) = utils
+(get_speech_timestamps, _, _, VADIterator, collect_chunks) = utils
 
 # This port doesn't matter, it just helps with consistency
 audio_file_sender_port = 12345
 
 # only this one does
 audio_file_receiver_port = 5555
+
+
+def read_audio(file, sampling_rate: int = SAMPLE_RATE) -> torch.Tensor:
+    file.seek(0)
+    audio, _ = sf.read(file, dtype="float32")
+    # reshape to (n,)
+    return torch.from_numpy(audio).view(-1)
+
+
+def save_audio(path: str, tensor: torch.Tensor, sampling_rate: int = 16000):
+    torchaudio.save(path, tensor.unsqueeze(0), sampling_rate, bits_per_sample=16)
 
 
 def receive_packets(data_queue):
@@ -60,34 +73,50 @@ def transcribe_packets(data_queue: Queue[bytes]):
 
             last_time = current_time
             while not data_queue.empty():
-                data = data_queue.get()
+                data: bytes = data_queue.get()
 
-                data_as_wav: sr.AudioData = sr.AudioData(
-                    data, SAMPLE_RATE, SAMPLE_WIDTH
-                )
-                wav_data: io.BytesIO = io.BytesIO(data_as_wav.get_wav_data())
+                audio_data: sr.AudioData = sr.AudioData(data, SAMPLE_RATE, SAMPLE_WIDTH)
+                wav_data: io.BytesIO = io.BytesIO(audio_data.get_wav_data())
 
                 # Use Silero VAD to skip segments without voice
                 wav: torch.Tensor = read_audio(wav_data, sampling_rate=SAMPLE_RATE)
-                print(wav.shape)
-                import pdb
+                # assert wav.shape == (4000,)
 
-                pdb.set_trace()
-
-                speech_probs: List[float] = []
                 window_size_samples = 512
-                new_wav = []
-                for i in range(0, len(wav), window_size_samples):
-                    chunk: torch.Tensor = wav[i : i + window_size_samples]
-                    if len(chunk) < window_size_samples:
-                        break
-                    speech_prob = silero_model(chunk, SAMPLE_RATE).item()
-                    speech_probs.append(speech_prob)
-                    if speech_prob > 0.5:
-                        new_wav.append(chunk)
+                speech_probs_and_chunks = [
+                    (silero_model(chunk, SAMPLE_RATE).item(), chunk)
+                    if len(chunk) == window_size_samples
+                    else (1, chunk)
+                    for chunk in (
+                        wav[i : i + window_size_samples]
+                        for i in range(0, len(wav), window_size_samples)
+                    )
+                ]
                 silero_model.reset_states()
 
-                last_sample += data
+                speech_chunks = [
+                    chunk for prob, chunk in speech_probs_and_chunks if prob > 0.2
+                ]
+                if not speech_chunks:
+                    continue
+                new_wav: torch.Tensor = torch.cat(speech_chunks)
+
+                numpy_data = new_wav.numpy()
+                wav_data_bytes = io.BytesIO()
+
+                sf.write(
+                    wav_data_bytes,
+                    numpy_data.T,
+                    SAMPLE_RATE,
+                    format="WAV",
+                    subtype="PCM_16",
+                )
+                wav_data_bytes.seek(0)
+
+                with wave.open(wav_data_bytes, "r") as f:
+                    new_bytes = f.readframes(f.getnframes())
+
+                last_sample += new_bytes
 
             audio_data = sr.AudioData(last_sample, SAMPLE_RATE, SAMPLE_WIDTH)
             wav_data = io.BytesIO(audio_data.get_wav_data())
