@@ -108,6 +108,9 @@ export default function HomeScreen({ navigation }) {
         ref={bottomSheetRef}
         alert={activeAlert}
         setAlert={setActiveAlert}
+        onClose={() => {
+          setLiveStream(false);
+        }}
       ></BottomDrawer>
     </View>
   );

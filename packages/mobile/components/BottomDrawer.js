@@ -5,7 +5,7 @@ import { forwardRef, useMemo } from "react";
 import Transcription from "./Transcription";
 
 const BottomDrawer = forwardRef(
-  ({ liveStream, liveStreamOn, alert, setAlert }, ref) => {
+  ({ liveStream, liveStreamOn, alert, setAlert, ...props }, ref) => {
     // variables
     const snapPoints = useMemo(() => ["25%", "80%"], []);
 
@@ -17,13 +17,9 @@ const BottomDrawer = forwardRef(
         index={-1}
         snapPoints={snapPoints}
         enablePanDownToClose
+        {...props}
       >
-        {liveStreamOn && (
-          <View style={styles.content}>
-            <Text style={styles.text}>Live Stream</Text>
-            <Transcription transcript={liveStream} />
-          </View>
-        )}
+        {liveStreamOn && <Transcription transcript={liveStream} />}
         {!!alert && !liveStreamOn && (
           <View style={styles.content}>
             <Notification
