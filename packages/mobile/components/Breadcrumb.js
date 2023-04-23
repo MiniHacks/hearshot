@@ -1,19 +1,26 @@
 import React from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function Breadcrumb({ navigation, pageName }) {
   return (
-    <Pressable
+    <TouchableOpacity
       style={{
         flexDirection: "row",
         alignItems: "center",
+        marginBottom: 10,
       }}
       onPress={() => navigation.pop()}
     >
       <MaterialCommunityIcons name="chevron-left" color="#C7C7C7" size={28} />
       <Text style={styles.title}>{pageName}</Text>
-    </Pressable>
+    </TouchableOpacity>
   );
 }
 

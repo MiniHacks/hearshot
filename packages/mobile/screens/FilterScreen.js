@@ -3,6 +3,7 @@ import Breadcrumb from "../components/Breadcrumb";
 import Input from "../components/Input";
 import { useState } from "react";
 import Tag from "../components/Tag";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function FilterScreen({ navigation }) {
   const [radius, setRadius] = useState("");
@@ -16,7 +17,7 @@ export default function FilterScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Breadcrumb navigation={navigation} pageName={"Filters"} />
       <Text style={styles.title}>Settings</Text>
       <Input
@@ -57,7 +58,7 @@ export default function FilterScreen({ navigation }) {
           <Tag key={filter} filter={filter} onDelete={handleDelete} />
         ))}
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -66,7 +67,6 @@ const styles = StyleSheet.create({
     display: "flex",
     flex: 1,
     flexDirection: "column",
-    paddingVertical: 64,
     paddingHorizontal: 16,
     backgroundColor: "#1C1C1E",
   },

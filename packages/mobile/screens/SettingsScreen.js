@@ -3,6 +3,7 @@ import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
 import Section from "../components/Section";
 import auth from "@react-native-firebase/auth";
 import Breadcrumb from "../components/Breadcrumb";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const generalSections = [
   {
@@ -36,13 +37,13 @@ const supportSections = [
     title: "Feedback",
     subtitle: "Drop us a line",
     iconName: "comment-quote-outline",
-    link: "https://google.com",
+    link: "https://devpost.com/software/hearshot",
   },
 ];
 
 export default function SettingsScreen({ navigation }) {
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Breadcrumb navigation={navigation} pageName={"Settings"} />
 
       <Text style={styles.heading}>General</Text>
@@ -60,7 +61,17 @@ export default function SettingsScreen({ navigation }) {
           )}
         </View>
       ))}
-      <Text style={styles.heading}>Support us</Text>
+
+      <Text
+        style={[
+          styles.heading,
+          {
+            marginTop: 20,
+          },
+        ]}
+      >
+        Support us
+      </Text>
       {supportSections.map((section, index) => (
         <View key={section.title}>
           <Section
@@ -76,7 +87,12 @@ export default function SettingsScreen({ navigation }) {
         </View>
       ))}
       <Pressable
-        style={styles.button}
+        style={[
+          styles.button,
+          {
+            marginTop: 40,
+          },
+        ]}
         title="Enter"
         accessibilityLabel="Enter a phone number"
         onPress={async () => {
@@ -95,7 +111,7 @@ export default function SettingsScreen({ navigation }) {
       >
         Developed by Samyok, Sasha, Minnerva, and Ritik for LAHacks 2023
       </Text>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -104,7 +120,6 @@ const styles = StyleSheet.create({
     display: "flex",
     flex: 1,
     flexDirection: "column",
-    paddingVertical: 64,
     paddingHorizontal: 16,
     backgroundColor: "#1C1C1E",
   },
