@@ -78,7 +78,12 @@ export default function HomeScreen({ navigation }) {
         height: "100%",
       }}
     >
-      <Map ref={mapRef} snapTo={snapTo} setActiveAlert={setActiveAlert} />
+      <Map
+        ref={mapRef}
+        snapTo={snapTo}
+        setActiveAlert={setActiveAlert}
+        alerts={alerts}
+      />
       <TopLinearGradient />
       <NavBar navigation={navigation} onLiveClick={onDisplayNotification} />
       <NumberOfAlerts />
