@@ -9,6 +9,7 @@ import torch
 import whisper
 import threading
 from datetime import datetime, timedelta
+from transcribe import transcribe
 
 localhost = "127.0.0.1"
 
@@ -40,8 +41,6 @@ def receive_packets(data_queue):
 def transcribe_packets(data_queue):
     finished: list[str] = [""]
     temp_file: str = NamedTemporaryFile().name
-    model = "small.en"
-    audio_model = whisper.load_model(model)
 
     last_time = None
     last_sample = bytes()
@@ -92,7 +91,9 @@ def transcribe_packets(data_queue):
             with open(temp_file, "w+b") as f:
                 f.write(wav_data.read())
 
-            result = audio_model.transcribe(temp_file, fp16=torch.cuda.is_available())
+            result = transcribe(temp_file)
+
+            assert type(result["text"]) == str
             text = result["text"].strip()
 
             if phrase_complete:
@@ -109,7 +110,7 @@ def transcribe_packets(data_queue):
 
 
 def main():
-    data_queue = Queue()
+    data_queue: Queue[bytes] = Queue()
 
     recv_thread = threading.Thread(target=receive_packets, args=(data_queue,))
     transcribe_thread = threading.Thread(target=transcribe_packets, args=(data_queue,))
