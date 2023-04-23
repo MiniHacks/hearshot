@@ -85,38 +85,19 @@ def transcribe_packets(data_queue: Queue[bytes]):
                 window_size_samples = 512
                 speech_probs_and_chunks = [
                     (silero_model(chunk, SAMPLE_RATE).item(), chunk)
-                    if len(chunk) == window_size_samples
-                    else (1, chunk)
                     for chunk in (
                         wav[i : i + window_size_samples]
                         for i in range(0, len(wav), window_size_samples)
                     )
+                    if len(chunk) == window_size_samples
                 ]
                 silero_model.reset_states()
 
-                speech_chunks = [
-                    chunk for prob, chunk in speech_probs_and_chunks if prob > 0.2
-                ]
-                if not speech_chunks:
+                speech_probs = [prob for prob, _ in speech_probs_and_chunks]
+                if max(speech_probs) < 0.3:
                     continue
-                new_wav: torch.Tensor = torch.cat(speech_chunks)
 
-                numpy_data = new_wav.numpy()
-                wav_data_bytes = io.BytesIO()
-
-                sf.write(
-                    wav_data_bytes,
-                    numpy_data.T,
-                    SAMPLE_RATE,
-                    format="WAV",
-                    subtype="PCM_16",
-                )
-                wav_data_bytes.seek(0)
-
-                with wave.open(wav_data_bytes, "r") as f:
-                    new_bytes = f.readframes(f.getnframes())
-
-                last_sample += new_bytes
+                last_sample += data
 
             audio_data = sr.AudioData(last_sample, SAMPLE_RATE, SAMPLE_WIDTH)
             wav_data = io.BytesIO(audio_data.get_wav_data())
