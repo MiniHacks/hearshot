@@ -1,7 +1,11 @@
 import MapView, { Callout, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import mapStyles from "../static/mapstyles.json";
 import React from "react";
-import { Image, View } from "react-native";
+import { Dimensions, Image, View } from "react-native";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 const images = {
   fire: require("../assets/fire.png"),
@@ -20,7 +24,7 @@ const SAMPLE_ALERTS = {
       address: "615 Fulton St SE, Minneapolis, MN 55455",
       date: Date.now() - 10000,
       summary:
-        "Victim was outside, walking down FultonSt Se when a male suspect fired a BB gunfrom a 3rd story window at Pioneer Hall. Victim was struck face.",
+        "Victim was outside, walking down FultonSt Se when a male suspect fired a BB gun from a 3rd story window at Pioneer Hall. Victim was struck face.",
     },
     {
       id: "2",
@@ -50,13 +54,15 @@ const Map = React.forwardRef(
     { snapTo, setActiveAlert, alerts = SAMPLE_ALERTS.alerts, ...props },
     ref
   ) => {
+    const insets = useSafeAreaInsets();
+
     return (
       <MapView
         ref={ref}
         provider={PROVIDER_GOOGLE}
         style={{
           width: "100%",
-          height: "100%",
+          height: Dimensions.get("window").height + insets.bottom + 25,
           position: "absolute",
           zIndex: -1,
         }}

@@ -187,7 +187,7 @@ export default function HomeScreen({ navigation }) {
       </SafeAreaView>
       <BottomSheet
         ref={bottomSheetRef}
-        index={0}
+        index={-1}
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
         enablePanDownToClose
