@@ -103,6 +103,16 @@ const Map = React.forwardRef(
             onPress={() => {
               setActiveAlert(alert);
               snapTo(0);
+              ref.current.animateCamera(
+                {
+                  center: {
+                    latitude: alert.coord[0],
+                    longitude: alert.coord[1],
+                  },
+                  zoom: 16,
+                },
+                { duration: 350 }
+              );
             }}
           >
             <Callout tooltip={true} />
