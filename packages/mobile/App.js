@@ -1,52 +1,82 @@
+import "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
-import React from "react";
-import { StyleSheet } from "react-native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import React, { useEffect } from "react";
+import { StyleSheet, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
 import SettingsScreen from "./screens/SettingsScreen";
 import HomeScreen from "./screens/HomeScreen";
+import SplashScreen from "./screens/SplashScreen";
+import NotificationScreen from "./screens/NotificationScreen";
+import FilterScreen from "./screens/FilterScreen";
+import messaging from "@react-native-firebase/messaging";
 
-const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
-function MyTabs() {
+const forFade = ({ current }) => ({
+  cardStyle: {
+    opacity: current.progress,
+  },
+});
+
+function MyStack() {
   return (
-    <Tab.Navigator
-      initialRouteName="Home"
+    <Stack.Navigator
       screenOptions={{
-        tabBarActiveTintColor: "#e91e63",
         headerShown: false,
+        gestureEnabled: true,
       }}
     >
-      <Tab.Screen
+      <Stack.Screen
+        name="Splash"
+        component={SplashScreen}
+        options={{ cardStyleInterpolator: forFade, gestureEnabled: false }}
+      />
+      <Stack.Screen
         name="Home"
         component={HomeScreen}
-        options={{
-          tabBarLabel: "Home",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="home" color={color} size={size} />
-          ),
-        }}
+        options={{ cardStyleInterpolator: forFade, gestureEnabled: false }}
       />
-      <Tab.Screen
-        name="Settings"
-        component={SettingsScreen}
-        options={{
-          tabBarLabel: "Settings",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="bell" color={color} size={size} />
-          ),
-        }}
-      />
-    </Tab.Navigator>
+      <Stack.Screen name="Settings" component={SettingsScreen} />
+      <Stack.Screen name="Notifications" component={NotificationScreen} />
+      <Stack.Screen name="Filters" component={FilterScreen} />
+    </Stack.Navigator>
   );
 }
 
 export default function App() {
+  useEffect(() => {
+    async function requestTokens() {
+      const authStatus = await messaging().requestPermission();
+      const enabled =
+        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+      if (enabled) {
+        console.log("Authorization status:", authStatus);
+      } else {
+        console.log("Authorization status:", authStatus);
+        return;
+      }
+      // await messaging().registerDeviceForRemoteMessages();
+
+      const token = await messaging().getAPNSToken();
+
+      console.log("APNS Token:", token);
+
+      const fcmToken = await messaging().getToken();
+
+      console.log("FCM Token:", fcmToken);
+
+      await messaging().subscribeToTopic("alerts");
+    }
+    requestTokens();
+  }, []);
+
   return (
     <NavigationContainer>
       <StatusBar style="auto" />
-      <MyTabs />
+      <MyStack />
     </NavigationContainer>
   );
 }

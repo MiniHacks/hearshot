@@ -73,6 +73,7 @@ env
 *.vtt
 
 settings.json
-
-
 google_creds.json
+**/service-account.json
+
+.idea/httpRequests/
