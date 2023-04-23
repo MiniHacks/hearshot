@@ -32,7 +32,7 @@ export const NavBar = ({ navigation, onLiveClick }) => {
       >
         <MaterialCommunityIcons name="home-outline" color="#8269E3" size={24} />
         <Text style={{ fontSize: 20, color: "white", marginHorizontal: 8 }}>
-          My Location
+          Los Angeles, CA
         </Text>
       </Pressable>
       <ButtonTransparent
