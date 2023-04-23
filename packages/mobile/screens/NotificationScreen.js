@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Notification from "../components/Notification";
 import Breadcrumb from "../components/Breadcrumb";
+import { distance } from "../lib/distance";
 
 // TODO: dummy data stuff; replace when we actually get data.
 function generateRandomDate() {
@@ -42,27 +43,6 @@ const notifications = [
 //       and get the location string (ex: "keller hall") from it here too???
 
 export default function NotificationScreen({ route, navigation }) {
-  const distance = (notifLocation) => {
-    // overkill of haversines formula
-    const [lat1, long1] = notifLocation;
-    const [lat2, long2] = [34.070313, -118.446938];
-    const R = 6371; // Radius of the earth in km
-    const KM_TO_MI = 0.621371;
-    function degToRad(deg) {
-      return deg * (Math.PI / 180);
-    }
-    const dLat = (degToRad(lat2 - lat1) * Math.PI) / 180;
-    const dLon = (degToRad(long2 - long1) * Math.PI) / 180;
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(degToRad(lat1)) *
-        Math.cos(degToRad(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c * KM_TO_MI; // Distance in miles
-  };
-
   return (
     <View style={styles.container}>
       <Breadcrumb navigation={navigation} pageName={"Notifications"} />

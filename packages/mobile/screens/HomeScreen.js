@@ -21,10 +21,11 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
 import Map from "../components/Map";
 import BottomSheet from "@gorhom/bottom-sheet";
 import Notification from "../components/Notification";
+import TopLinearGradient from "../components/TopLinearGradient";
+import BottomDrawer from "../components/BottomDrawer";
 
 export default function HomeScreen({ navigation }) {
   useEffect(() => {
@@ -35,9 +36,6 @@ export default function HomeScreen({ navigation }) {
   const bottomSheetRef = useRef(null);
 
   const [activeAlert, setActiveAlert] = useState(null);
-
-  // variables
-  const snapPoints = useMemo(() => ["25%", "80%"], []);
 
   // callbacks
   const handleSheetChanges = useCallback((index) => {
@@ -61,8 +59,6 @@ export default function HomeScreen({ navigation }) {
       console.log("Location", location);
     })();
   }, []);
-
-  const insets = useSafeAreaInsets();
 
   async function onDisplayNotification() {
     // Request permissions (required for iOS)
@@ -102,38 +98,7 @@ export default function HomeScreen({ navigation }) {
       }}
     >
       <Map ref={mapRef} snapTo={snapTo} setActiveAlert={setActiveAlert} />
-      <LinearGradient
-        // Top Linear Gradient
-        colors={[
-          "rgba(0,0,0,1)",
-          "rgba(0,0,0,.8438)",
-          "rgba(0,0,0,.3438)",
-          "rgba(0,0,0,.17)",
-          "rgba(0,0,0,0)",
-        ]}
-        locations={[0, 0.3, 0.7, 0.8, 1]}
-        style={{
-          position: "absolute",
-          left: 0,
-          right: 0,
-          top: 0,
-          height: insets.top + 100,
-        }}
-        pointerEvents={"none"}
-      />
-      <LinearGradient
-        // Top Linear Gradient
-        colors={["rgba(0,0,0,.95)", "rgba(0,0,0,.7438)", "rgba(0,0,0,0)"]}
-        locations={[1, 0.5, 0]}
-        style={{
-          position: "absolute",
-          left: 0,
-          right: 0,
-          bottom: 0,
-          height: insets.bottom + 70,
-        }}
-        pointerEvents={"none"}
-      />
+      <TopLinearGradient />
       <SafeAreaView
         style={{
           display: "flex",
@@ -188,37 +153,12 @@ export default function HomeScreen({ navigation }) {
       >
         <Text style={styles.text}>5 recent alerts in this area</Text>
       </SafeAreaView>
-      <BottomSheet
-        backgroundStyle={styles.sheet}
-        handleIndicatorStyle={styles.handle}
+      <BottomDrawer
         ref={bottomSheetRef}
-        index={-1}
-        snapPoints={snapPoints}
-        onChange={handleSheetChanges}
-        enablePanDownToClose
-      >
-        {activeAlert != null && (
-          <View style={styles.content}>
-            <Notification
-              tagline={activeAlert.name}
-              location={activeAlert.address}
-              notifLocation={activeAlert.coord}
-              notifTime={new Date(activeAlert.date)}
-              distance={activeAlert.distance}
-            />
-
-            {/*<Text style={styles.text}>{JSON.stringify(activeAlert)}</Text>*/}
-            <Button
-              color={"#898686"}
-              title={"Close"}
-              onPress={() => {
-                bottomSheetRef.current.close();
-                setActiveAlert(null);
-              }}
-            />
-          </View>
-        )}
-      </BottomSheet>
+        alert={activeAlert}
+        setAlert={setActiveAlert}
+        handleSheetChanges={handleSheetChanges}
+      />
     </View>
   );
 }

@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import { distance } from "../lib/distance";
 
 const images = {
   fire: require("../assets/fire.png"),
@@ -55,6 +56,11 @@ const Map = React.forwardRef(
     ref
   ) => {
     const insets = useSafeAreaInsets();
+
+    alerts = alerts.map((alert) => ({
+      ...alert,
+      distance: distance(alert.coord),
+    }));
 
     return (
       <MapView
