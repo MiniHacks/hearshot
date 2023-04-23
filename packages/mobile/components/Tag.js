@@ -1,24 +1,30 @@
 import React from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { View, Text } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function Tag({ filter }) {
   return (
-    <View>
-      <View style={styles.container}>
-        <Text>{filter}</Text>
-      </View>
+    <View
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        textAlign: "center",
+        borderStyle: "solid",
+        borderWidth: 1,
+        borderColor: "#8269E3",
+        borderRadius: 16,
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        margin: 6,
+      }}
+    >
+      <MaterialCommunityIcons
+        name={"window-close"}
+        color={"#BDB5E5"}
+        size={16}
+      />
+      <Text style={{ color: "#BDB5E5", marginHorizontal: 4 }}>{filter}</Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#8269E3",
-    borderRadius: 8,
-    flex: 1,
-    flexDirection: "row",
-    textAlign: "center",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});

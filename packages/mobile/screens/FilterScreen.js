@@ -23,12 +23,24 @@ export default function FilterScreen({ navigation }) {
       <Text style={styles.title}>Filters</Text>
       <Input
         caption={"Add filtered words"}
-        onChange={(filter) => setFilters([...filters, filter])}
         contentType={"telephoneNumber"}
         keyboardType={"default"}
         placeholder={"Shooting"}
         state={filters}
       />
+
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "flex-start",
+          marginVertical: 16,
+          flexWrap: "wrap",
+        }}
+      >
+        {filters.map((filter) => (
+          <Tag filter={filter} />
+        ))}
+      </View>
     </View>
   );
 }
