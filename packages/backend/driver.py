@@ -1,5 +1,6 @@
 import socket
 from models import Alert
+from copy import deepcopy
 import os
 from time import sleep, time
 import io
@@ -161,7 +162,28 @@ def upsert_alert(alert: Alert):
     )
 
 
-def process_events(transcript_queue: Queue[str]):
+def process_events(transcript_queue: Queue[TranscriptSection]):
+    while True:
+        if not transcript_queue.empty():
+            while transcript_queue:
+                item = deepcopy(transcript_queue.get())
+                new_section = {
+                    "content": item.content,
+                    "start": item.start,
+                    "end": item.end,
+                }
+
+                # Add the new section to the existing Firebase object
+                transcription_ref = db.collection("transcriptions").document("lapd")
+                transcription = transcription_ref.get()
+                sections = transcription.get("sections")
+                sections.append(new_section)
+
+                # Update the document with the new sections array
+                transcription_ref.update({"sections": sections})
+
+                print(f"Processing {item}")
+        sleep(0.25)
     """
     { alerts: [{
         id: “1”
