@@ -1,12 +1,11 @@
-from datetime import datetime
 from typing import List, Tuple
 from pydantic import BaseModel
 from enum import Enum
 
 
 class TranscriptSection(BaseModel):
-    start: datetime
-    end: datetime
+    start: float | None
+    end: float | None
     content: str
 
 
@@ -25,7 +24,7 @@ class Severity(str, Enum):
 class Alert(BaseModel):
     label: str
     severity: Severity
-    date: datetime
+    date: float  # Unix timestamp
     transcript: List[TranscriptSection]
 
     raw_address: str

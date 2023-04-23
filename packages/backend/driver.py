@@ -1,7 +1,7 @@
 import socket
 from models import Alert
 import os
-from time import sleep
+from time import sleep, time
 import io
 from queue import Queue
 from tempfile import NamedTemporaryFile
@@ -9,12 +9,12 @@ import speech_recognition as sr
 import torch
 import soundfile as sf
 import threading
-from datetime import datetime, timedelta
 from transcribe import transcribe
 from pathlib import Path
 
 from firebase_admin import credentials, firestore, initialize_app
 from dotenv import load_dotenv
+from models import TranscriptSection
 
 ENV_PATH = Path(__file__).parent.parent.parent.absolute().joinpath(".env")
 
@@ -64,19 +64,24 @@ def receive_packets(data_queue):
         data_queue.put(audio_data)
 
 
-def transcribe_packets(data_queue: Queue[bytes]):
-    finished: list[str] = [""]
+def transcribe_packets(
+    data_queue: Queue[bytes], transcript_queue: Queue[TranscriptSection]
+):
+    curr_section = TranscriptSection(content="", start=None, end=None)
+    finished: list[TranscriptSection] = [curr_section]
     temp_file: str = NamedTemporaryFile().name
 
     last_time = None
     last_sample = bytes()
 
     while True:
-        current_time: datetime = datetime.now()
+        current_time: float = time()
         if not data_queue.empty():
             phrase_complete = False
+            if not curr_section.start:
+                curr_section.start = current_time
 
-            if last_time and current_time - last_time > timedelta(seconds=2):
+            if last_time and current_time - last_time > 2:
                 last_sample = bytes()
                 phrase_complete = True
 
@@ -120,13 +125,23 @@ def transcribe_packets(data_queue: Queue[bytes]):
             text = result["text"].strip()
 
             if phrase_complete:
-                finished.append(text)
+                if not text.strip():
+                    continue
+                curr_section.content = text
+                curr_section.end = current_time
+                finished[-1] = curr_section
+                transcript_queue.put(curr_section)
+                curr_section = TranscriptSection(content="", start=None, end=None)
+                finished.append(curr_section)
+                last_time = None
             else:
-                finished[-1] = text
+                curr_section.content = text
+                curr_section.end = current_time
+                finished[-1] = curr_section
 
             os.system("cls" if os.name == "nt" else "clear")
             for line in finished:
-                print(line)
+                print(f"{line.content} ({line.start} - {line.end})")
             print("", end="", flush=True)
 
         sleep(0.25)
