@@ -9,6 +9,7 @@ requests
 
 ruff
 black
+
 isort
 
 pyaudio
