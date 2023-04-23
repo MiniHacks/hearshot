@@ -1,4 +1,5 @@
 import socket
+import os
 from time import sleep
 import io
 from queue import Queue
@@ -28,7 +29,7 @@ def recv_bytes(data_queue):
 
 
 def transcribe(data_queue):
-    finished = []
+    finished = [""]
     model = "small.en"
     audio_model = whisper.load_model(model)
 
@@ -36,15 +37,20 @@ def transcribe(data_queue):
     last_sample = bytes()
 
     while True:
+        current_time = datetime.now()
         if not data_queue.empty():
-            audio_data = data_queue.get()
-            if audio_data == bytes(8000):
-                continue
+            phrase_complete = False
 
-            current_time = datetime.now()
-            if last_time:
-                print(f"delta: {current_time - last_time}")
-            last_sample += audio_data
+            if last_time and current_time - last_time > timedelta(seconds=2):
+                last_sample = bytes()
+                phrase_complete = True
+
+            last_time = current_time
+            while not data_queue.empty():
+                data = data_queue.get()
+                if data == bytes(8000):
+                    continue
+                last_sample += data
 
             audio_data = sr.AudioData(last_sample, 16_000, 2)
             wav_data = io.BytesIO(audio_data.get_wav_data())
@@ -52,19 +58,20 @@ def transcribe(data_queue):
             with open("temp.wav", "w+b") as f:
                 f.write(wav_data.read())
 
-            if last_time and current_time - last_time > timedelta(seconds=1):
-                result = audio_model.transcribe(
-                    "temp.wav", fp16=torch.cuda.is_available()
-                )
-                text = result["text"].strip()
-                print(f"Phrase update: {text}")
+            result = audio_model.transcribe("temp.wav", fp16=torch.cuda.is_available())
+            text = result["text"].strip()
+            print(f"Phrase update: {text}")
 
-            if last_time and current_time - last_time > timedelta(seconds=3):
-                print(f"Phrase complete: {text}")
+            if phrase_complete:
                 finished.append(text)
-                last_sample = bytes()
+            else:
+                finished[-1] = text
 
-            last_time = current_time
+            os.system("cls" if os.name == "nt" else "clear")
+            for line in finished:
+                print(line)
+            print("", end="", flush=True)
+
         sleep(0.25)
 
 
