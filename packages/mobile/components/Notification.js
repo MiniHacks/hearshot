@@ -7,6 +7,7 @@ import {
   Pressable,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { formatDistanceToNow, formatRelative } from "date-fns";
 
 export default function Notification({
   tagline,
@@ -32,7 +33,8 @@ export default function Notification({
         }}
       >
         <Text style={styles.detail}>
-          {minDiff()} min ago · {currentTime.toLocaleTimeString()}{" "}
+          {formatDistanceToNow(notifTime)} ago ·{" "}
+          {formatRelative(notifTime, currentTime)}
         </Text>
         {minDiff() < MAX_RECENCY && (
           <MaterialCommunityIcons
