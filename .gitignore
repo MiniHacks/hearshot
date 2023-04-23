@@ -63,3 +63,5 @@ packages/io/dist/
 **/dist/**
 
 **/service-account.json
+
+.idea/httpRequests/

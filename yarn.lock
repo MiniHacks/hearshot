@@ -4808,6 +4808,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-firebase/firestore@npm:^17.4.2":
+  version: 17.4.2
+  resolution: "@react-native-firebase/firestore@npm:17.4.2"
+  peerDependencies:
+    "@react-native-firebase/app": 17.4.2
+  checksum: b051120a8e1015f0328d5ee476c769f051b2dfc6c40b0e07b7ec631c28d4a5ba29a239b644f16e8a25bb64d4ac89b79da6a2d595e595bba7f1729e7a5d6eddc9
+  languageName: node
+  linkType: hard
+
 "@react-native-firebase/messaging@npm:^17.4.2":
   version: 17.4.2
   resolution: "@react-native-firebase/messaging@npm:17.4.2"
@@ -12585,6 +12594,7 @@ __metadata:
     "@notifee/react-native": ^7.7.1
     "@react-native-firebase/app": ^17.4.2
     "@react-native-firebase/auth": ^17.4.2
+    "@react-native-firebase/firestore": ^17.4.2
     "@react-native-firebase/messaging": ^17.4.2
     "@react-native-masked-view/masked-view": 0.2.8
     "@react-navigation/bottom-tabs": ^6.5.7
