@@ -1,8 +1,9 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import Notification from "../components/Notification";
 import Breadcrumb from "../components/Breadcrumb";
 import { distance } from "../lib/distance";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 // TODO: dummy data stuff; replace when we actually get data.
 function generateRandomDate() {
@@ -43,8 +44,19 @@ const notifications = [
 
 export default function NotificationScreen({ navigation }) {
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Breadcrumb navigation={navigation} pageName={"Notifications"} />
+      <Text
+        style={{
+          color: "white",
+          fontSize: 28,
+          fontWeight: "bold",
+          marginBottom: 12,
+          marginTop: 20,
+        }}
+      >
+        Today
+      </Text>
       {notifications
         .slice()
         .map((notif) => ({
@@ -67,7 +79,7 @@ export default function NotificationScreen({ navigation }) {
             )}
           </View>
         ))}
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -76,7 +88,6 @@ const styles = StyleSheet.create({
     display: "flex",
     flex: 1,
     flexDirection: "column",
-    paddingVertical: 64,
     paddingHorizontal: 16,
     backgroundColor: "#1C1C1E",
   },

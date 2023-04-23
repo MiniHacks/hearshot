@@ -1,11 +1,13 @@
 import React from "react";
 import { Pressable, Touchable } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Octicons } from "@expo/vector-icons";
 
 export default function ButtonTransparent({
   hexBorder,
   rgbFill,
   iconName,
+  color,
   ...props
 }) {
   return (
@@ -20,7 +22,7 @@ export default function ButtonTransparent({
       }}
       {...props}
     >
-      <MaterialCommunityIcons name={iconName} color={hexBorder} size={28} />
+      <Octicons name={iconName} color={color || hexBorder} size={28} />
     </Pressable>
   );
 }

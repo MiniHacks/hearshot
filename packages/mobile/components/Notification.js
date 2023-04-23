@@ -37,7 +37,7 @@ export default function Notification({
       >
         <Text style={styles.detail}>
           {formatDistanceToNow(notifTime)} ago ·{" "}
-          {formatRelative(notifTime, currentTime)}
+          {formatRelative(notifTime, currentTime)}{" "}
         </Text>
         {minDiff() < MAX_RECENCY && (
           <MaterialCommunityIcons

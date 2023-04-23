@@ -1,19 +1,27 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Button, Pressable, StyleSheet, Text, View } from "react-native";
 import Breadcrumb from "../components/Breadcrumb";
 import Input from "../components/Input";
 import { useState } from "react";
 import Tag from "../components/Tag";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function FilterScreen({ navigation }) {
   const [radius, setRadius] = useState("");
-  const [filters, setFilters] = useState([]);
+  const [filters, setFilters] = useState(["Stabbing", "Suicide"]);
+
+  const handleDelete = (filterToDelete) => {
+    const updatedFilters = filters.filter(
+      (filter) => filter !== filterToDelete
+    );
+    setFilters(updatedFilters);
+  };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Breadcrumb navigation={navigation} pageName={"Filters"} />
       <Text style={styles.title}>Settings</Text>
       <Input
-        caption={"Enter Radius"}
+        caption={"Enter radius in miles"}
         onChange={(number) => setRadius(number)}
         contentType={"none"}
         keyboardType={"numeric"}
@@ -23,10 +31,19 @@ export default function FilterScreen({ navigation }) {
       <Text style={styles.title}>Filters</Text>
       <Input
         caption={"Add filtered words"}
-        contentType={"telephoneNumber"}
+        contentType={"none"}
         keyboardType={"default"}
-        placeholder={"Shooting"}
+        autoCorrect={false}
+        placeholder={"Fire"}
         state={filters}
+        blurOnSubmit={true}
+        returnKeyType="done"
+        onSubmitEditing={(filter) => {
+          const newFilter = filter.nativeEvent.text.trim().toLowerCase();
+          if (newFilter && !filters.includes(newFilter)) {
+            setFilters([...filters, newFilter]);
+          }
+        }}
       />
 
       <View
@@ -38,10 +55,10 @@ export default function FilterScreen({ navigation }) {
         }}
       >
         {filters.map((filter) => (
-          <Tag filter={filter} />
+          <Tag key={filter} filter={filter} onDelete={handleDelete} />
         ))}
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -50,7 +67,6 @@ const styles = StyleSheet.create({
     display: "flex",
     flex: 1,
     flexDirection: "column",
-    paddingVertical: 64,
     paddingHorizontal: 16,
     backgroundColor: "#1C1C1E",
   },

@@ -19,9 +19,10 @@ export const NavBar = ({ navigation, onLiveClick }) => {
       }}
     >
       <ButtonTransparent
-        hexBorder={"#FFFFFF"}
+        hexBorder={"rgba(255, 255, 255, 0.4)"}
         rgbFill={"rgba(255, 255, 255, 0.1)"}
-        iconName={"cog-outline"}
+        iconName={"gear"}
+        color={"rgba(255, 255, 255, 0.4)"}
         onPress={() => navigation.navigate("Settings")}
       />
       <Pressable
@@ -30,7 +31,14 @@ export const NavBar = ({ navigation, onLiveClick }) => {
           color: "white",
         }}
       >
-        <MaterialCommunityIcons name="home-outline" color="#8269E3" size={24} />
+        <MaterialCommunityIcons
+          name="navigation-variant-outline"
+          style={{
+            transform: [{ scaleX: -1 }],
+          }}
+          color="#8269E3"
+          size={24}
+        />
         <Text style={{ fontSize: 20, color: "white", marginHorizontal: 8 }}>
           Los Angeles, CA
         </Text>
@@ -38,7 +46,7 @@ export const NavBar = ({ navigation, onLiveClick }) => {
       <ButtonTransparent
         hexBorder={"#FF2F0E"}
         rgbFill={"rgba(255, 47, 14, 0.1)"}
-        iconName={"radio-tower"}
+        iconName={"broadcast"}
         onPress={onLiveClick}
       />
     </SafeAreaView>
