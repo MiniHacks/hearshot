@@ -5,6 +5,14 @@
       <excludeFolder url="file://$MODULE_DIR$/.tmp" />
       <excludeFolder url="file://$MODULE_DIR$/temp" />
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/.idea/httpRequests" />
+      <excludeFolder url="file://$MODULE_DIR$/.yarn/cache" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/mobile/.expo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/mobile/android/.gradle" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/mobile/ios/Hearshot.xcodeproj/project.xcworkspace" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/mobile/ios/Hearshot.xcworkspace/xcuserdata" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/mobile/ios/Pods" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/mobile/ios/build" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
