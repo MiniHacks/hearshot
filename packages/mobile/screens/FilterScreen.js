@@ -27,6 +27,11 @@ export default function FilterScreen({ navigation }) {
         keyboardType={"default"}
         placeholder={"Shooting"}
         state={filters}
+        enablesReturnKeyAutomatically={true}
+        blurOnSubmit={true}
+        onSubmitEditing={(filter) => {
+          setFilters([...filters, filter]);
+        }}
       />
 
       <View

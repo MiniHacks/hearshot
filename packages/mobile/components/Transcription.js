@@ -39,19 +39,12 @@ const Transcription = ({ transcript }) => {
         },
       ]}
     >
-      <Image
-        source={require("../assets/waveform.png")}
-        style={{
-          position: "absolute",
-          right: 20,
-          width: Dimensions.get("window").width - 40 - 85,
-          height: 15,
-          top: 13,
-        }}
-      />
       <View
         style={{
           marginBottom: 25,
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
         <View
@@ -63,10 +56,24 @@ const Transcription = ({ transcript }) => {
           ]}
           accessibilityLabel="Distance from event"
         >
-          <Text style={{ fontSize: 14, color: "#1C1C1E", fontWeight: "bold" }}>
+          <Text
+            style={{
+              fontSize: 13,
+              color: "#1C1C1E",
+              fontWeight: "bold",
+              height: "100%",
+            }}
+          >
             LIVE
           </Text>
         </View>
+        <Image
+          source={require("../assets/waveform.png")}
+          style={{
+            width: Dimensions.get("window").width - 40 - 85,
+            height: 15,
+          }}
+        />
       </View>
       <Text style={styles.title}>{name}</Text>
       <ScrollView
