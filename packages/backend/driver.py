@@ -163,16 +163,22 @@ def process_events():
 
 
 def main():
-    data_queue: Queue[bytes] = Queue()
+    packet_queue: Queue[bytes] = Queue()
+    transcript_queue: Queue[str] = Queue()
 
-    recv_thread = threading.Thread(target=receive_packets, args=(data_queue,))
-    transcribe_thread = threading.Thread(target=transcribe_packets, args=(data_queue,))
+    recv_thread = threading.Thread(target=receive_packets, args=(packet_queue,))
+    transcribe_thread = threading.Thread(
+        target=transcribe_packets, args=(packet_queue, transcript_queue)
+    )
+    event_thread = threading.Thread(target=process_events, args=(transcript_queue,))
 
     recv_thread.start()
     transcribe_thread.start()
+    event_thread.start()
 
     recv_thread.join()
     transcribe_thread.join()
+    event_thread.join()
 
 
 if __name__ == "__main__":
