@@ -1,15 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Keyboard, View } from "react-native";
+import { Button, Keyboard, View } from "react-native";
 import notifee from "@notifee/react-native";
 import Map from "../components/Map";
 import TopLinearGradient from "../components/TopLinearGradient";
 import BottomDrawer from "../components/BottomDrawer";
-<<<<<<< HEAD
 import NumberOfAlerts from "../components/NumberOfAlerts";
 import { NavBar } from "../components/NavBar";
-=======
-import { getDistance } from "./NotificationScreen";
->>>>>>> f080485bc50fc8ff24005e262f5b5b2e151c309d
+import { distance } from "../lib/distance";
 
 export default function HomeScreen({ navigation }) {
   useEffect(() => {
@@ -82,7 +79,7 @@ export default function HomeScreen({ navigation }) {
               location={activeAlert.address}
               notifLocation={activeAlert.coord}
               notifTime={new Date(activeAlert.date)}
-              distance={getDistance(activeAlert.coord)}
+              distance={distance(activeAlert.coord)}
             />
 
             {/*<Text style={styles.text}>{JSON.stringify(activeAlert)}</Text>*/}
