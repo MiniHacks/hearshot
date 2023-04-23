@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Tuple
 from pydantic import BaseModel
 from enum import Enum
@@ -32,4 +33,4 @@ class Alert(BaseModel):
     raw_address: str
     address: str
     name: str
-    coord: Tuple[float, float] // latitude, longitude
+    coord: Tuple[float, float]  # latitude, longitude
