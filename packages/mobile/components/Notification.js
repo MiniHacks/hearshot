@@ -11,8 +11,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 export default function Notification({
   tagline,
   location,
-  notifTime,
   distance,
+  notifTime,
 }) {
   // FIXME: should probably just do calculation in screen instead?
   const currentTime = new Date();
@@ -55,7 +55,7 @@ export default function Notification({
           accessibilityLabel="Distance from event"
         >
           <Text style={{ fontSize: 14, color: "#1C1C1E", fontWeight: "bold" }}>
-            {distance} ft
+            {distance?.toFixed(1)} mi
           </Text>
         </Pressable>
       </View>

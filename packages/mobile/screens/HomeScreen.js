@@ -24,6 +24,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import Map from "../components/Map";
 import BottomSheet from "@gorhom/bottom-sheet";
+import Notification from "../components/Notification";
 
 export default function HomeScreen({ navigation }) {
   useEffect(() => {
@@ -149,7 +150,9 @@ export default function HomeScreen({ navigation }) {
           hexBorder={"#FFFFFF"}
           rgbFill={"rgba(255, 255, 255, 0.1)"}
           iconName={"cog-outline"}
-          onPress={() => navigation.navigate("Settings")}
+          onPress={() =>
+            navigation.navigate("Settings", { location: location })
+          }
         />
         <Pressable
           style={{
@@ -186,22 +189,35 @@ export default function HomeScreen({ navigation }) {
         <Text style={styles.text}>5 recent alerts in this area</Text>
       </SafeAreaView>
       <BottomSheet
+        backgroundStyle={styles.sheet}
+        handleIndicatorStyle={styles.handle}
         ref={bottomSheetRef}
         index={-1}
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
         enablePanDownToClose
       >
-        <View style={styles.contentContainer}>
-          <Text>{JSON.stringify(activeAlert)}</Text>
-          <Button
-            title={"Close"}
-            onPress={() => {
-              bottomSheetRef.current.close();
-              setActiveAlert(null);
-            }}
-          />
-        </View>
+        {activeAlert != null && (
+          <View style={styles.content}>
+            <Notification
+              tagline={activeAlert.name}
+              location={activeAlert.address}
+              notifLocation={activeAlert.coord}
+              notifTime={new Date(activeAlert.date)}
+              distance={activeAlert.distance}
+            />
+
+            {/*<Text style={styles.text}>{JSON.stringify(activeAlert)}</Text>*/}
+            <Button
+              color={"#898686"}
+              title={"Close"}
+              onPress={() => {
+                bottomSheetRef.current.close();
+                setActiveAlert(null);
+              }}
+            />
+          </View>
+        )}
       </BottomSheet>
     </View>
   );
@@ -213,13 +229,14 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     fontSize: 16,
   },
-  container: {
-    flex: 1,
-    padding: 24,
-    backgroundColor: "grey",
+  sheet: {
+    backgroundColor: "#151515FF",
   },
-  contentContainer: {
-    flex: 1,
-    alignItems: "center",
+  handle: {
+    width: "40%",
+    backgroundColor: "#2E2D2DFF",
+  },
+  content: {
+    paddingHorizontal: 24,
   },
 });
