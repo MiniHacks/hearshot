@@ -91,29 +91,7 @@ export default function HomeScreen({ navigation }) {
         ref={bottomSheetRef}
         alert={activeAlert}
         setAlert={setActiveAlert}
-      >
-        {activeAlert != null && (
-          <View style={{ paddingHorizontal: 24 }}>
-            <Notification
-              tagline={activeAlert.name}
-              location={activeAlert.address}
-              notifLocation={activeAlert.coord}
-              notifTime={new Date(activeAlert.date)}
-              distance={distance(activeAlert.coord)}
-            />
-
-            {/*<Text style={styles.text}>{JSON.stringify(activeAlert)}</Text>*/}
-            <Button
-              color={"#898686"}
-              title={"Close"}
-              onPress={() => {
-                bottomSheetRef.current.close();
-                setActiveAlert(null);
-              }}
-            />
-          </View>
-        )}
-      </BottomDrawer>
+      ></BottomDrawer>
     </View>
   );
 }

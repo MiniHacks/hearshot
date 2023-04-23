@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "white",
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: "bold",
     flex: 1,
     flexWrap: "wrap",
