@@ -8,6 +8,16 @@ openai
 pyaudio
 requests 
 ruff
+
 torch
 torchaudio
 uvicorn[standard]==0.17.5
+black
+
+
+isort
+
+pyaudio
+SpeechRecognition
+soundfile
+openai-whisper
