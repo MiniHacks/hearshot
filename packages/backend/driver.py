@@ -1,5 +1,5 @@
 import socket
-import time
+from time import sleep
 import io
 from queue import Queue
 from tempfile import NamedTemporaryFile
@@ -7,6 +7,7 @@ import speech_recognition as sr
 import torch
 import whisper
 import threading
+from datetime import datetime, timedelta
 
 localhost = "127.0.0.1"
 
@@ -27,29 +28,44 @@ def recv_bytes(data_queue):
 
 
 def transcribe(data_queue):
-    model = "tiny.en"
+    finished = []
+    model = "small.en"
     audio_model = whisper.load_model(model)
-    last_time = time.time()
-    total = b""
+
+    last_time = None
+    last_sample = bytes()
 
     while True:
-        audio_data = data_queue.get()
+        if not data_queue.empty():
+            audio_data = data_queue.get()
+            if audio_data == bytes(8000):
+                continue
 
-        new_time = time.time()
-        total += audio_data
+            current_time = datetime.now()
+            if last_time:
+                print(f"delta: {current_time - last_time}")
+            last_sample += audio_data
 
-        if new_time - last_time > 3:
-            audio_data = sr.AudioData(total, 16_000, 2)
+            audio_data = sr.AudioData(last_sample, 16_000, 2)
             wav_data = io.BytesIO(audio_data.get_wav_data())
 
             with open("temp.wav", "w+b") as f:
                 f.write(wav_data.read())
 
-            result = audio_model.transcribe("temp.wav", fp16=torch.cuda.is_available())
-            text = result["text"].strip()
-            print(text)
+            if last_time and current_time - last_time > timedelta(seconds=1):
+                result = audio_model.transcribe(
+                    "temp.wav", fp16=torch.cuda.is_available()
+                )
+                text = result["text"].strip()
+                print(f"Phrase update: {text}")
 
-            last_time = new_time
+            if last_time and current_time - last_time > timedelta(seconds=3):
+                print(f"Phrase complete: {text}")
+                finished.append(text)
+                last_sample = bytes()
+
+            last_time = current_time
+        sleep(0.25)
 
 
 def main():
