@@ -33,15 +33,9 @@ silero_model, utils = torch.hub.load(
 )
 (get_speech_timestamps, _, _, VADIterator, collect_chunks) = utils
 
-cred = credentials.Certificate(
-    {
-        "type": "service_account",
-        "project_id": os.environ["FIREBASE_PROJECT_ID"],
-        "private_key": os.environ["FIREBASE_AUTH_SECRET"].replace("\\n", "\n"),
-        "client_email": os.environ["FIREBASE_CLIENT_EMAIL"],
-        "token_uri": "https://oauth2.googleapis.com/token",
-    }
-)
+# credentias w service account JSON
+cred = credentials.Certificate("google_creds.json")
+
 initialize_app(cred)
 
 db = firestore.client()
