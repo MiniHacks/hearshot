@@ -1,6 +1,6 @@
 import "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -9,6 +9,7 @@ import HomeScreen from "./screens/HomeScreen";
 import SplashScreen from "./screens/SplashScreen";
 import NotificationScreen from "./screens/NotificationScreen";
 import FilterScreen from "./screens/FilterScreen";
+import messaging from "@react-native-firebase/messaging";
 
 const Stack = createStackNavigator();
 
@@ -44,6 +45,34 @@ function MyStack() {
 }
 
 export default function App() {
+  useEffect(() => {
+    async function requestTokens() {
+      const authStatus = await messaging().requestPermission();
+      const enabled =
+        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+      if (enabled) {
+        console.log("Authorization status:", authStatus);
+      } else {
+        console.log("Authorization status:", authStatus);
+        return;
+      }
+      // await messaging().registerDeviceForRemoteMessages();
+
+      const token = await messaging().getAPNSToken();
+
+      console.log("APNS Token:", token);
+
+      const fcmToken = await messaging().getToken();
+
+      console.log("FCM Token:", fcmToken);
+
+      await messaging().subscribeToTopic("alerts");
+    }
+    requestTokens();
+  }, []);
+
   return (
     <NavigationContainer>
       <StatusBar style="auto" />
