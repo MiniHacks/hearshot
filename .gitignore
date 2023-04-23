@@ -73,3 +73,6 @@ env
 *.vtt
 
 settings.json
+
+
+google_creds.json
