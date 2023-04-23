@@ -6,7 +6,7 @@ import Tag from "../components/Tag";
 
 export default function FilterScreen({ navigation }) {
   const [radius, setRadius] = useState("");
-  const [filters, setFilters] = useState([]);
+  const [filters, setFilters] = useState(["Stabbing", "Suicide"]);
 
   const handleDelete = (filterToDelete) => {
     const updatedFilters = filters.filter(
@@ -20,7 +20,7 @@ export default function FilterScreen({ navigation }) {
       <Breadcrumb navigation={navigation} pageName={"Filters"} />
       <Text style={styles.title}>Settings</Text>
       <Input
-        caption={"Enter Radius"}
+        caption={"Enter radius in miles"}
         onChange={(number) => setRadius(number)}
         contentType={"none"}
         keyboardType={"numeric"}

@@ -20,8 +20,9 @@ export default function Breadcrumb({ navigation, pageName }) {
 const styles = StyleSheet.create({
   title: {
     color: "#C7C7C7",
-    fontSize: 28,
-    fontWeight: "bold",
+    fontSize: 20,
+    letterSpacing: 2,
+    fontWeight: "300",
     marginLeft: 8,
   },
 });
