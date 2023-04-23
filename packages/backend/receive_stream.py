@@ -33,7 +33,7 @@ def recv_bytes(filename):
     last_time = time.time()
     total = b""
     while True:
-        audio_data, address = sock.recvfrom(1024)
+        audio_data, address = sock.recvfrom(8000)
         new_time = time.time()
         if new_time - last_time > 3:
             break
@@ -93,6 +93,7 @@ def send_bytes(filename: str):
             seconds_to_wait = num_samples / sample_rate_hz
             print(f"Waiting {seconds_to_wait} seconds")
             time.sleep(seconds_to_wait)
+    print(f"Done sending: {bytes_sent} bytes")
 
 
 def main():
