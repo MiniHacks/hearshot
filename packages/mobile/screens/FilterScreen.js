@@ -4,7 +4,7 @@ import Input from "../components/Input";
 import { useState } from "react";
 import Tag from "../components/Tag";
 
-export default function FilterScreen({ route, navigation }) {
+export default function FilterScreen({ navigation }) {
   const [radius, setRadius] = useState("");
   const [filters, setFilters] = useState([]);
 

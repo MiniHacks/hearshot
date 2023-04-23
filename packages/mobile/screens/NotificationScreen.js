@@ -1,6 +1,5 @@
 import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { StyleSheet, View } from "react-native";
 import Notification from "../components/Notification";
 import Breadcrumb from "../components/Breadcrumb";
 import { distance } from "../lib/distance";
@@ -42,13 +41,16 @@ const notifications = [
 // TODO: im assuming we're converting lat/long to distance here
 //       and get the location string (ex: "keller hall") from it here too???
 
-export default function NotificationScreen({ route, navigation }) {
+export default function NotificationScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Breadcrumb navigation={navigation} pageName={"Notifications"} />
       {notifications
         .slice()
-        .map((notif) => ({ ...notif, distance: distance(notif.notifLocation) }))
+        .map((notif) => ({
+          ...notif,
+          distance: distance(notif.notifLocation),
+        }))
         .sort((a, b) => a.distance - b.distance)
         .map((notif, index) => (
           <View key={notif.tagline}>

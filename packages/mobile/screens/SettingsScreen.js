@@ -40,7 +40,7 @@ const supportSections = [
   },
 ];
 
-export default function SettingsScreen({ route, navigation }) {
+export default function SettingsScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Breadcrumb navigation={navigation} pageName={"Settings"} />
