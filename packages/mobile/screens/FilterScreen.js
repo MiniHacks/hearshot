@@ -32,6 +32,7 @@ export default function FilterScreen({ navigation }) {
         caption={"Add filtered words"}
         contentType={"none"}
         keyboardType={"default"}
+        autoCorrect={false}
         placeholder={"Fire"}
         state={filters}
         blurOnSubmit={true}
