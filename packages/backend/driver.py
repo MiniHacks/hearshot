@@ -12,6 +12,15 @@ from datetime import datetime, timedelta
 
 localhost = "127.0.0.1"
 
+USE_ONNX = True
+silero_model, utils = torch.hub.load(
+    repo_or_dir="snakers4/silero-vad",
+    model="silero_vad",
+    force_reload=True,
+    onnx=USE_ONNX,
+)
+(get_speech_timestamps, save_audio, read_audio, VADIterator, collect_chunks) = utils
+
 # This port doesn't matter, it just helps with consistency
 audio_file_sender_port = 12345
 
@@ -38,7 +47,7 @@ def transcribe(data_queue):
     last_sample = bytes()
 
     while True:
-        current_time = datetime.now()
+        current_time: datetime = datetime.now()
         if not data_queue.empty():
             phrase_complete = False
 
@@ -49,8 +58,32 @@ def transcribe(data_queue):
             last_time = current_time
             while not data_queue.empty():
                 data = data_queue.get()
-                if data == bytes(8000):
-                    continue
+
+                data_as_wav = sr.AudioData(data, 16_000, 2)
+                wav_data = io.BytesIO(data_as_wav.get_wav_data())
+
+                # Use Silero VAD to skip segments without voice
+                wav = read_audio(wav_data, sampling_rate=16_000)
+                print(wav.shape)
+                import pdb
+
+                pdb.set_trace()
+
+                speech_probs = []
+                window_size_samples = 512
+                new_wav = []
+                for i in range(0, len(wav), window_size_samples):
+                    chunk = wav[i : i + window_size_samples]
+                    if len(chunk) < window_size_samples:
+                        break
+                    speech_prob = silero_model(chunk, 16_000).item()
+                    speech_probs.append(speech_prob)
+                    print(speech_prob)
+                    if speech_prob > 0.5:
+                        new_wav.append(chunk)
+                silero_model.reset_states()  # reset model states after each audio
+                print(speech_probs[:10])  # first 10 chunks predicts
+
                 last_sample += data
 
             audio_data = sr.AudioData(last_sample, 16_000, 2)

@@ -3,6 +3,7 @@ uvicorn[standard]==0.17.5
 
 torch
 torchaudio
+onnxruntime
 
 requests 
 
