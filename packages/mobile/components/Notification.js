@@ -14,6 +14,7 @@ export default function Notification({
   location,
   distance,
   notifTime,
+  onPress,
 }) {
   // FIXME: should probably just do calculation in screen instead?
   const currentTime = new Date();
@@ -23,8 +24,10 @@ export default function Notification({
     return Math.floor(diff / (1000 * 60));
   };
 
+  const Container = onPress ? TouchableOpacity : View;
+
   return (
-    <TouchableOpacity style={styles.container}>
+    <Container style={styles.container} onPress={onPress}>
       <View
         style={{
           flexDirection: "row",
@@ -62,7 +65,7 @@ export default function Notification({
         </Pressable>
       </View>
       <Text style={styles.subtitle}>{location}</Text>
-    </TouchableOpacity>
+    </Container>
   );
 }
 

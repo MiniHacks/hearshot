@@ -27,14 +27,14 @@ const BottomDrawer = forwardRef(({ alert, setAlert }, ref) => {
           />
 
           {/*<Text style={styles.text}>{JSON.stringify(alert)}</Text>*/}
-          <Button
-            color={"#898686"}
-            title={"Close"}
-            onPress={() => {
-              ref.current.close();
-              setAlert(null);
-            }}
-          />
+          {/*<Button*/}
+          {/*  color={"#898686"}*/}
+          {/*  title={"Close"}*/}
+          {/*  onPress={() => {*/}
+          {/*    ref.current.close();*/}
+          {/*    setAlert(null);*/}
+          {/*  }}*/}
+          {/*/>*/}
         </View>
       )}
     </BottomSheet>
