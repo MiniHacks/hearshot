@@ -18,11 +18,6 @@ export default function HomeScreen({ navigation }) {
 
   const [activeAlert, setActiveAlert] = useState(null);
 
-  // callbacks
-  const handleSheetChanges = useCallback((index) => {
-    console.log("handleSheetChanges", index);
-  }, []);
-
   const mapRef = useRef(null);
 
   async function onDisplayNotification() {
@@ -70,7 +65,6 @@ export default function HomeScreen({ navigation }) {
         ref={bottomSheetRef}
         alert={activeAlert}
         setAlert={setActiveAlert}
-        handleSheetChanges={handleSheetChanges}
       >
         {activeAlert != null && (
           <View style={styles.content}>
