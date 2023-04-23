@@ -40,7 +40,8 @@ const supportSections = [
   },
 ];
 
-export default function SettingsScreen({ navigation }) {
+export default function SettingsScreen({ route, navigation }) {
+  const { location } = route.params;
   return (
     <View style={styles.container}>
       <Breadcrumb navigation={navigation} pageName={"Settings"} />
@@ -54,7 +55,7 @@ export default function SettingsScreen({ navigation }) {
             subtitle={section.subtitle}
             iconName={section.iconName}
             link={section.link}
-            onPress={() => navigation.navigate(section.link)}
+            onPress={() => navigation.navigate(section.link, { location })}
           />
           {index !== generalSections.length - 1 && (
             <View style={styles.hr}></View>
