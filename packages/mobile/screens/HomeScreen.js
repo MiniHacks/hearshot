@@ -1,19 +1,20 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Button, Keyboard, View } from "react-native";
+import { Keyboard, View } from "react-native";
 import notifee from "@notifee/react-native";
 import Map from "../components/Map";
 import TopLinearGradient from "../components/TopLinearGradient";
 import BottomDrawer from "../components/BottomDrawer";
 import NumberOfAlerts from "../components/NumberOfAlerts";
 import { NavBar } from "../components/NavBar";
-import { distance } from "../lib/distance";
-import Notification from "../components/Notification";
 import firestore from "@react-native-firebase/firestore";
 
 export default function HomeScreen({ navigation }) {
   useEffect(() => {
     Keyboard.dismiss();
   }, [navigation]);
+
+  const [liveStreamData, setLiveStreamData] = useState(null);
+  const [liveStream, setLiveStream] = useState(false);
 
   // get alerts from database and then set them to state
   const [alerts, setAlerts] = useState([]);
@@ -30,8 +31,19 @@ export default function HomeScreen({ navigation }) {
         setAlerts(alerts);
       });
 
+    const subscriber2 = firestore()
+      .collection("transcriptions")
+      .doc("lapd")
+      .onSnapshot((doc) => {
+        console.log(doc.data(), "doc.data()");
+        setLiveStreamData(doc.data());
+      });
+
     // Stop listening for updates when no longer required
-    return () => subscriber();
+    return () => {
+      subscriber();
+      subscriber2();
+    };
   }, []);
 
   // ref
@@ -40,6 +52,11 @@ export default function HomeScreen({ navigation }) {
   const [activeAlert, setActiveAlert] = useState(null);
 
   const mapRef = useRef(null);
+
+  function onLiveClick() {
+    setLiveStream(true);
+    snapTo(1);
+  }
 
   async function onDisplayNotification() {
     // Request permissions (required for iOS)
@@ -70,8 +87,6 @@ export default function HomeScreen({ navigation }) {
     bottomSheetRef.current.snapToIndex(index);
   }, []);
 
-  // TODO: lol redundant styling
-  // TODO: move to styles.js
   return (
     <View
       style={{
@@ -85,9 +100,11 @@ export default function HomeScreen({ navigation }) {
         alerts={alerts}
       />
       <TopLinearGradient />
-      <NavBar navigation={navigation} onLiveClick={onDisplayNotification} />
+      <NavBar navigation={navigation} onLiveClick={onLiveClick} />
       <NumberOfAlerts />
       <BottomDrawer
+        liveStream={liveStreamData}
+        liveStreamOn={liveStream}
         ref={bottomSheetRef}
         alert={activeAlert}
         setAlert={setActiveAlert}

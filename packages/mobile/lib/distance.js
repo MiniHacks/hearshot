@@ -1,5 +1,8 @@
 export const distance = (notifLocation) => {
   // overkill of haversines formula
+  if (notifLocation == null) return 0;
+  if (notifLocation?.length !== 2) return 0;
+
   const [lat1, long1] = notifLocation;
   const [lat2, long2] = [34.070313, -118.446938];
   const R = 6371; // Radius of the earth in km

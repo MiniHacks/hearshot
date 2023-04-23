@@ -49,6 +49,32 @@ app.get("/send-notification", async (req: Request, res: Response) => {
   }
 });
 
+// app.get("/mock", (req, res) => {
+//   const db = firebaseAdmin.firestore();
+//   const docRef = db.collection("transcriptions").doc("lapd");
+//   docRef.set({
+//     name: "LAPD Radio Transcript #001",
+//     sections: [
+//       {
+//         start: "2021-08-17 08:00:00",
+//         end: "2021-08-17 08:01:00",
+//         content: "Unit 5 requesting backup at 123 Main St.",
+//       },
+//       {
+//         start: "2021-08-17 08:02:00",
+//         end: "2021-08-17 08:03:00",
+//         content: "Unit 10 responding to 123 Main St.",
+//       },
+//       {
+//         start: "2021-08-17 08:05:00",
+//         end: "2021-08-17 08:05:30",
+//         content: "Suspect in custody at 123 Main St.",
+//       },
+//     ],
+//   });
+//   res.json("ok");
+// });
+
 io.on("connection", (socket) => {
   console.log(`user ${socket.id} connected`);
 });

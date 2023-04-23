@@ -59,7 +59,7 @@ const Map = React.forwardRef(
 
     alerts = alerts.map((alert) => ({
       ...alert,
-      distance: distance(alert.coord),
+      distance: distance(alert.coord || [0, 0]),
     }));
 
     return (
@@ -94,8 +94,8 @@ const Map = React.forwardRef(
           <Marker
             key={alert.id}
             coordinate={{
-              latitude: alert.coord[0],
-              longitude: alert.coord[1],
+              latitude: alert?.coord?.[0],
+              longitude: alert?.coord?.[1],
             }}
             title={alert.name}
             description={alert.summary}
@@ -106,8 +106,8 @@ const Map = React.forwardRef(
               ref.current.animateCamera(
                 {
                   center: {
-                    latitude: alert.coord[0],
-                    longitude: alert.coord[1],
+                    latitude: alert?.coord?.[0],
+                    longitude: alert?.coord?.[1],
                   },
                   zoom: 16,
                 },
