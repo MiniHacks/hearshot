@@ -13,6 +13,8 @@ import threading
 from transcribe import transcribe
 from pathlib import Path
 import openai
+import json
+import requests
 
 from firebase_admin import credentials, firestore, initialize_app
 from dotenv import load_dotenv
@@ -28,6 +30,7 @@ openai.api_key = os.environ.get("OPENAI_API_KEY")
 localhost = "127.0.0.1"
 SAMPLE_RATE = 16_000
 SAMPLE_WIDTH = 2
+MODEL = "gpt-3.5-turbo"
 
 USE_ONNX = True
 silero_model, utils = torch.hub.load(
@@ -50,6 +53,93 @@ audio_file_sender_port = 12345
 
 # only this one does
 audio_file_receiver_port = 5555
+
+
+def complete_chat(
+    messages: list[dict[str, str]],
+    temperature: float = 0.7,
+    top_p: float = 0.98,
+    stream=True,
+    timeout=30,
+) -> str:
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {openai.api_key}",
+    }
+
+    json_data = {
+        "model": MODEL,
+        "messages": messages,
+        "temperature": temperature,
+        "top_p": top_p,
+        "user": "Y2jtYmFpCg==",
+    }
+
+    if stream:
+        json_data["stream"] = True
+
+        def handle_response(response):
+            lines = [line.strip() for line in response.splitlines()]
+            lines = [line for line in lines if line != ""]
+
+            completion = ""
+            # skip DONE at the end
+            for line in lines[:-1]:
+                # each line is in the form `data: <json>`
+                json_str = line[6:]
+                data = json.loads(json_str)
+                # structure from: https://github.com/openai/openai-cookbook/blob/main/examples/How_to_stream_completions.ipynb
+                choice = data.get("choices", [{}])[0]
+                content = choice.get("delta", {}).get("content", "")
+                if content:
+                    completion += content
+            return completion
+
+        try:
+            with requests.post(
+                "https://api.openai.com/v1/chat/completions",
+                json=json_data,
+                headers=headers,
+                timeout=30,
+                stream=True,
+            ) as response:
+                return handle_response(response.text)
+        except Exception as e:
+            raise e
+    else:
+        response = requests.post(
+            "https://api.openai.com/v1/chat/completions",
+            headers=headers,
+            json=json_data,
+            timeout=30,
+        )
+        response_json = response.json()
+        completion: str = response_json["choices"][0]["message"]["content"]
+
+        return completion
+
+
+def complete(
+    system_prompt: str | None,
+    user_prompt: str | None,
+    temperature: float = 0.7,
+    top_p: float = 0.98,
+    stream=True,
+    timeout=30,
+    **kwargs,
+) -> str:
+    messages = []
+    if system_prompt is not None:
+        messages.append({"role": "system", "content": system_prompt})
+    if user_prompt is not None:
+        messages.append({"role": "user", "content": user_prompt})
+    return complete_chat(
+        messages=messages,
+        temperature=temperature,
+        top_p=top_p,
+        stream=stream,
+        timeout=timeout,
+    )
 
 
 def read_audio(file, sampling_rate: int = SAMPLE_RATE) -> torch.Tensor:
@@ -182,9 +272,9 @@ def process_events(transcript_queue: Queue[TranscriptSection]):
                 transcription = transcription_ref.get()
                 sections = transcription.get("sections")
                 sections.append(new_section)
-
-                # Update the document with the new sections array
                 transcription_ref.update({"sections": sections})
+
+                context += f"\n{item.content}"
 
                 print(f"Processing {item}")
         sleep(0.25)
