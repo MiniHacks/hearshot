@@ -118,6 +118,35 @@ def transcribe_packets(data_queue: Queue[bytes]):
 
         sleep(0.25)
 
+def process_events():
+    """
+    { alerts: [{
+        id: “1”
+        severity: “medium”,    name: “Aggravated Assault at Pioneer Hall”
+        coord: [44.9704, 93.2290]
+        address: “615 Fulton St SE, Minneapolis, MN 55455”    date: Tue April 23 2023 18:50:21 GMT-0500
+        summary: “Victim was outside, walking down Fulton 
+                St Se when a male suspect fired a BB gun   
+                from a 3rd story window at Pioneer Hall. 
+                Victim was struck face.”
+        }, {
+        id: “2”
+        severity: “fire”,    name: “Fire at Pauley Pavilion”
+        coord: [34.070313,-118.446938]
+        address: “301 Westwood Plaza, Los Angeles, CA 90095”    date: Tue April 23 2023 23:13:43 GMT-0500
+        summary: “Random turkeys appeared on campus and started 
+                setting everything on fire.”
+        }, {
+        id: “3”
+        severity: “high”,    name: “Shooting at XYZ”
+        coord: [21.312, 74.232]
+        address: “Kenneth H. Keller Hall, 200 Union St SE, 
+                Minneapolis, MN 55455”    date: Tue April 24 2023 19:30:10 GMT-0500
+        summary: “Shooting reported at XYZ. 2 Injured, suspect
+                wearing black vest.”
+        }]
+    }
+    """
 
 def main():
     data_queue: Queue[bytes] = Queue()
