@@ -12,6 +12,7 @@ import soundfile as sf
 import threading
 from transcribe import transcribe
 from pathlib import Path
+import openai
 
 from firebase_admin import credentials, firestore, initialize_app
 from dotenv import load_dotenv
@@ -20,6 +21,8 @@ from models import TranscriptSection
 ENV_PATH = Path(__file__).parent.parent.parent.absolute().joinpath(".env")
 
 load_dotenv(dotenv_path=ENV_PATH)
+
+openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 
 localhost = "127.0.0.1"
@@ -163,6 +166,7 @@ def upsert_alert(alert: Alert):
 
 
 def process_events(transcript_queue: Queue[TranscriptSection]):
+    context = ""
     while True:
         if not transcript_queue.empty():
             while transcript_queue:
