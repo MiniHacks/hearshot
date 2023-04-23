@@ -1,4 +1,5 @@
 import socket
+from models import Alert
 import os
 from time import sleep
 import io
@@ -131,7 +132,21 @@ def transcribe_packets(data_queue: Queue[bytes]):
         sleep(0.25)
 
 
-def process_events():
+def upsert_alert(alert: Alert):
+    time, doc = db.collection("alerts").add(
+        {
+            "label": alert.label,
+            "date": alert.date,
+            "severity": alert.severity.value,
+            "address": alert.address,
+            "raw_address": alert.raw_address,
+            "name": alert.name,
+            "coord": alert.coord,
+        }
+    )
+
+
+def process_events(transcript_queue: Queue[str]):
     """
     { alerts: [{
         id: “1”

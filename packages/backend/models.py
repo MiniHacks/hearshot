@@ -23,9 +23,8 @@ class Severity(Enum, str):
 
 
 class Alert(BaseModel):
-    id: str
-    severity: Severity
     label: str
+    severity: Severity
     date: datetime
     transcript: List[TranscriptSection]
     lastUpdated: datetime
