@@ -24,16 +24,11 @@ impl<A: ToSocketAddrs + Copy> std::io::Write for SockWriter<A> {
 fn main() {
     let (mut ctl, mut reader) = rtlsdr_mt::open(0).unwrap();
 
-    // let mut file = std::fs::File::options()
-    //     .write(true)
-    //     .open("out.raw")
-    //     .unwrap();
-
-    let sock = UdpSocket::bind((Ipv4Addr::new(127, 0, 0, 1), 5678)).unwrap();
+    let sock = UdpSocket::bind((Ipv4Addr::new(127, 0, 0, 1), 19855)).unwrap();
 
     let mut writer = BufWriter::new(SockWriter {
         sock,
-        dest: (Ipv4Addr::new(127, 0, 0, 1), 9874),
+        dest: (Ipv4Addr::new(127, 0, 0, 1), 5555),
     });
 
     ctl.disable_agc().unwrap();
@@ -50,14 +45,14 @@ fn main() {
     // How wide of a bandwidth are we doing?
     ctl.set_bandwidth(BANDWIDTH).unwrap();
 
-    let (tx, rx) = channel::<Vec<f32>>();
+    let (tx, rx) = channel::<Vec<i16>>();
 
     thread::spawn(move || loop {
         let audio_floats = rx.recv().unwrap();
 
         writer
             .write_all({
-                let num_bytes = audio_floats.len() * core::mem::size_of::<f32>();
+                let num_bytes = audio_floats.len() * core::mem::size_of::<i16>();
                 let data_ptr = audio_floats.as_ptr().cast::<u8>();
                 unsafe { core::slice::from_raw_parts(data_ptr, num_bytes) }
             })
@@ -113,7 +108,7 @@ mod demodulation {
         pub deviation: u32,
     }
 
-    pub fn demodulate(samples: &mut [IQSample], config: FMRadioConfig) -> Vec<f32> {
+    pub fn demodulate(samples: &mut [IQSample], config: FMRadioConfig) -> Vec<i16> {
         // Configure filter with info about the FM radio parameters
         let FMRadioConfig {
             bandwidth,
@@ -131,7 +126,7 @@ mod demodulation {
             let num_corresponding_silence_samples =
                 samples.len() as f32 * DESIRED_SAMPLE_RATE as f32 / samplerate as f32;
             let num_corresponding_silence_samples = num_corresponding_silence_samples as usize;
-            return vec![0.0; num_corresponding_silence_samples];
+            return vec![0; num_corresponding_silence_samples];
         }
 
         let filter = firfilt::FirFilterCrcf::kaiser(
@@ -160,6 +155,8 @@ mod demodulation {
         for x in ret.iter_mut() {
             *x *= 10.0;
         }
-        ret
+        ret.into_iter().map(|x| {
+            (x.clamp(-1., 1.) * 32_767.0) as i16
+        }).collect()
     }
 }

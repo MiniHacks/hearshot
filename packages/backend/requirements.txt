@@ -17,4 +17,5 @@ isort
 
 pyaudio
 SpeechRecognition
-
+soundfile
+openai-whisper
