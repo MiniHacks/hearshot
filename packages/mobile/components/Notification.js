@@ -79,6 +79,8 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 24,
     fontWeight: "bold",
+    flex: 1,
+    flexWrap: "wrap",
   },
   subtitle: {
     color: "#C7C7C7",
