@@ -42,10 +42,6 @@ def read_audio(file, sampling_rate: int = SAMPLE_RATE) -> torch.Tensor:
     return torch.from_numpy(audio).view(-1)
 
 
-def save_audio(path: str, tensor: torch.Tensor, sampling_rate: int = 16000):
-    torchaudio.save(path, tensor.unsqueeze(0), sampling_rate, bits_per_sample=16)
-
-
 def receive_packets(data_queue):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind(("0.0.0.0", audio_file_receiver_port))
