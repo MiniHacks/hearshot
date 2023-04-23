@@ -17,10 +17,11 @@ const server = createServer(app);
 
 const io = new Server(server);
 
-const PORT = +(process?.env?.IO_PORT ?? 5001);
+const PORT = +(process?.env?.IO_PORT ?? 5556);
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("hello world :)");
+  res.redirect("https://devpost.com/software/hearshot");
+  // res.send("hello world :)");
 });
 
 const TOKEN =
@@ -47,6 +48,51 @@ app.get("/send-notification", async (req: Request, res: Response) => {
   } catch (e) {
     res.status(500).send("error");
   }
+});
+
+app.post("/create-alert", async (req: Request, res: Response) => {
+  // get data from request
+  const { address, lat, long, date, label, name, raw_address, severity } = req.body;
+
+  const db = firebaseAdmin.firestore();
+  const docRef = db.collection("alerts").doc();
+
+  res.status(200).json({
+    id: docRef.id,
+  });
+
+  await docRef.set({
+    address,
+    coords: [lat, long],
+    date,
+    label,
+    name,
+    raw_address,
+    severity,
+  });
+
+  // get all tokens
+  const tokens = await db.collection("tokens").doc("alerts").get();
+  const tokensData = tokens.data();
+  const tokensList = tokensData?.tokens ?? [];
+
+  // send notification to all tokens
+  await Promise.all(
+    tokensList.map(async (token: string) => {
+      try {
+        console.log("sending notification", { token, title: "New Alert", body: `New alert at ${address}` });
+        await firebaseAdmin.messaging().send({
+          token: token as string,
+          notification: {
+            title: `🚨 ${label}`,
+            body: `at ${address}. Open the app for more details!`,
+          },
+        });
+      } catch (e) {
+        console.log("error sending notification", e);
+      }
+    })
+  );
 });
 
 // app.get("/mock", (req, res) => {

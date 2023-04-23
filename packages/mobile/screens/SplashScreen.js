@@ -69,6 +69,7 @@ export default function SplashScreen({ navigation }) {
     try {
       console.log("confirming code: " + code);
       await confirm.confirm(code);
+      await navigation.navigate("Home");
     } catch (error) {
       console.log("Invalid code.");
     }
