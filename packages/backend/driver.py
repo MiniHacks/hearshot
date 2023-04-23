@@ -1,4 +1,3 @@
-from typing import List
 import socket
 import os
 from time import sleep
@@ -7,17 +6,23 @@ from queue import Queue
 from tempfile import NamedTemporaryFile
 import speech_recognition as sr
 import torch
-import wave
 import soundfile as sf
 import threading
 from datetime import datetime, timedelta
 from transcribe import transcribe
-import torchaudio
+from pathlib import Path
+
+from firebase_admin import credentials, firestore, initialize_app
+from dotenv import load_dotenv
+
+ENV_PATH = Path(__file__).parent.parent.parent.absolute().joinpath(".env")
+
+load_dotenv(dotenv_path=ENV_PATH)
+
 
 localhost = "127.0.0.1"
 SAMPLE_RATE = 16_000
 SAMPLE_WIDTH = 2
-
 
 USE_ONNX = True
 silero_model, utils = torch.hub.load(
@@ -27,6 +32,19 @@ silero_model, utils = torch.hub.load(
     onnx=USE_ONNX,
 )
 (get_speech_timestamps, _, _, VADIterator, collect_chunks) = utils
+
+cred = credentials.Certificate(
+    {
+        "type": "service_account",
+        "project_id": os.environ["FIREBASE_PROJECT_ID"],
+        "private_key": os.environ["FIREBASE_AUTH_SECRET"].replace("\\n", "\n"),
+        "client_email": os.environ["FIREBASE_CLIENT_EMAIL"],
+        "token_uri": "https://oauth2.googleapis.com/token",
+    }
+)
+initialize_app(cred)
+
+db = firestore.client()
 
 # This port doesn't matter, it just helps with consistency
 audio_file_sender_port = 12345
@@ -118,6 +136,7 @@ def transcribe_packets(data_queue: Queue[bytes]):
 
         sleep(0.25)
 
+
 def process_events():
     """
     { alerts: [{
@@ -125,28 +144,29 @@ def process_events():
         severity: “medium”,    name: “Aggravated Assault at Pioneer Hall”
         coord: [44.9704, 93.2290]
         address: “615 Fulton St SE, Minneapolis, MN 55455”    date: Tue April 23 2023 18:50:21 GMT-0500
-        summary: “Victim was outside, walking down Fulton 
-                St Se when a male suspect fired a BB gun   
-                from a 3rd story window at Pioneer Hall. 
+        summary: “Victim was outside, walking down Fulton
+                St Se when a male suspect fired a BB gun
+                from a 3rd story window at Pioneer Hall.
                 Victim was struck face.”
         }, {
         id: “2”
         severity: “fire”,    name: “Fire at Pauley Pavilion”
         coord: [34.070313,-118.446938]
         address: “301 Westwood Plaza, Los Angeles, CA 90095”    date: Tue April 23 2023 23:13:43 GMT-0500
-        summary: “Random turkeys appeared on campus and started 
+        summary: “Random turkeys appeared on campus and started
                 setting everything on fire.”
         }, {
         id: “3”
         severity: “high”,    name: “Shooting at XYZ”
         coord: [21.312, 74.232]
-        address: “Kenneth H. Keller Hall, 200 Union St SE, 
+        address: “Kenneth H. Keller Hall, 200 Union St SE,
                 Minneapolis, MN 55455”    date: Tue April 24 2023 19:30:10 GMT-0500
         summary: “Shooting reported at XYZ. 2 Injured, suspect
                 wearing black vest.”
         }]
     }
     """
+
 
 def main():
     data_queue: Queue[bytes] = Queue()
