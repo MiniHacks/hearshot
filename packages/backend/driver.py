@@ -28,7 +28,7 @@ audio_file_sender_port = 12345
 audio_file_receiver_port = 5555
 
 
-def recv_bytes(data_queue):
+def receive_packets(data_queue):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind(("0.0.0.0", audio_file_receiver_port))
 
@@ -37,9 +37,9 @@ def recv_bytes(data_queue):
         data_queue.put(audio_data)
 
 
-def transcribe(data_queue):
-    finished = [""]
-    temp_file = NamedTemporaryFile().name
+def transcribe_packets(data_queue):
+    finished: list[str] = [""]
+    temp_file: str = NamedTemporaryFile().name
     model = "small.en"
     audio_model = whisper.load_model(model)
 
@@ -111,8 +111,8 @@ def transcribe(data_queue):
 def main():
     data_queue = Queue()
 
-    recv_thread = threading.Thread(target=recv_bytes, args=(data_queue,))
-    transcribe_thread = threading.Thread(target=transcribe, args=(data_queue,))
+    recv_thread = threading.Thread(target=receive_packets, args=(data_queue,))
+    transcribe_thread = threading.Thread(target=transcribe_packets, args=(data_queue,))
 
     recv_thread.start()
     transcribe_thread.start()
