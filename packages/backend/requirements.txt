@@ -13,3 +13,5 @@ isort
 
 pyaudio
 SpeechRecognition
+
+firebase_admin

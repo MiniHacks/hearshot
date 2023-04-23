@@ -15,7 +15,7 @@ class Transcription(BaseModel):
     sections: List[TranscriptSection]
 
 
-class Severity(Enum, str):
+class Severity(str, Enum):
     HIGH = "high"
     MEDIUM = "medium"
     LOW = "low"
@@ -27,7 +27,6 @@ class Alert(BaseModel):
     severity: Severity
     date: datetime
     transcript: List[TranscriptSection]
-    lastUpdated: datetime
 
     raw_address: str
     address: str
