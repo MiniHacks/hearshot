@@ -26,6 +26,7 @@ import BottomSheet from "@gorhom/bottom-sheet";
 import Notification from "../components/Notification";
 import TopLinearGradient from "../components/TopLinearGradient";
 import BottomDrawer from "../components/BottomDrawer";
+import { getDistance } from "./NotificationScreen";
 
 export default function HomeScreen({ navigation }) {
   useEffect(() => {
@@ -158,7 +159,29 @@ export default function HomeScreen({ navigation }) {
         alert={activeAlert}
         setAlert={setActiveAlert}
         handleSheetChanges={handleSheetChanges}
-      />
+      >
+        {activeAlert != null && (
+          <View style={styles.content}>
+            <Notification
+              tagline={activeAlert.name}
+              location={activeAlert.address}
+              notifLocation={activeAlert.coord}
+              notifTime={new Date(activeAlert.date)}
+              distance={getDistance(activeAlert.coord)}
+            />
+
+            {/*<Text style={styles.text}>{JSON.stringify(activeAlert)}</Text>*/}
+            <Button
+              color={"#898686"}
+              title={"Close"}
+              onPress={() => {
+                bottomSheetRef.current.close();
+                setActiveAlert(null);
+              }}
+            />
+          </View>
+        )}
+      </BottomDrawer>
     </View>
   );
 }
