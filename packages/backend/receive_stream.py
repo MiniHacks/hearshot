@@ -1,6 +1,12 @@
 import socket
 import time
 import sys
+import speech_recognition as sr
+import whisper
+import io
+import torch
+from tempfile import NamedTemporaryFile
+
 
 localhost = "127.0.0.1"
 
@@ -17,12 +23,40 @@ def recv_bytes(filename):
 
     # Bind the socket to a local address and port
     sock.bind(("0.0.0.0", audio_file_receiver_port))
+    temp_file = NamedTemporaryFile().name
 
-    with open(filename, "wb") as f:
-        while True:
-            data, address = sock.recvfrom(1024)
-            f.write(data)
-            print(f"Received {len(data)} bytes from {address}: {data}")
+    model = "tiny.en"
+    audio_model = whisper.load_model(model)
+
+    yeet = None
+
+    last_time = time.time()
+    total = b""
+    while True:
+        audio_data, address = sock.recvfrom(1024)
+        new_time = time.time()
+        if new_time - last_time > 3:
+            break
+
+        total += audio_data
+
+        if audio_data is not None:
+            last_time = new_time
+
+    print(f"we done {len(total)!r}")
+    audio_data = sr.AudioData(total, 16_000, 2)
+    print(len(total))
+    wav_data = io.BytesIO(audio_data.get_wav_data())
+
+    # Write wav data to the temporary file as bytes.
+    with open("yo.wav", "w+b") as f:
+        f.write(wav_data.read())
+
+    # Read the transcription.
+    result = audio_model.transcribe("yo.wav", fp16=torch.cuda.is_available())
+    text = result["text"].strip()
+    print(text)
+    print("done")
 
 
 def send_bytes(filename: str):
