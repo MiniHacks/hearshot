@@ -1,15 +1,17 @@
+SpeechRecognition
+black
 fastapi==0.74.0
-uvicorn[standard]==0.17.5
-
+firebase_admin
+isort
+onnxruntime
+openai
+pyaudio
+requests 
+ruff
 
 torch
 torchaudio
-onnxruntime
-
-
-requests 
-
-ruff
+uvicorn[standard]==0.17.5
 black
 
 
