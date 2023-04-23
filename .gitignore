@@ -71,3 +71,5 @@ env
 *.tsv
 *.txt
 *.vtt
+
+settings.json
