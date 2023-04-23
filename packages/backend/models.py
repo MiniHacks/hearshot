@@ -31,3 +31,11 @@ class Alert(BaseModel):
     address: str
     name: str
     coord: Tuple[float, float]  # latitude, longitude
+
+
+class Location(BaseModel):
+    address: str
+    raw_address: str | None
+    name: str
+    latitude: float
+    longitude: float

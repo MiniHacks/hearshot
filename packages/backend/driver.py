@@ -15,10 +15,11 @@ from pathlib import Path
 import openai
 import json
 import requests
+import random
 
 from firebase_admin import credentials, firestore, initialize_app
 from dotenv import load_dotenv
-from models import TranscriptSection
+from models import TranscriptSection, Location, Severity
 
 ENV_PATH = Path(__file__).parent.parent.parent.absolute().joinpath(".env")
 
@@ -31,6 +32,23 @@ localhost = "127.0.0.1"
 SAMPLE_RATE = 16_000
 SAMPLE_WIDTH = 2
 MODEL = "gpt-3.5-turbo"
+
+SYSTEM_PROMPT = """You are part of an app to warn people about dangerous situations by extracting information from police radio. You will be given a transcript. Note that it is likely not accurate due to low quality data, use common sense to make changes. Use your expert knowledge of police codes and terminology to extract as many events as possible in the form. Be liberal in your interpretation and make sure to not include polie codes in the "alert" field. Additionally, include a "theories" condensing all facts that are related to unknown events. Cut out useless information. I need you to output a JSON with an event for every address listed in the transcript. Do not include any quotes or slashes. It is crucial that you match this format:
+
+{
+    "events": [{
+    "alert": "<succint tag line>", (example: "Armed Suspect", "Request for Unit", "Ongoing Investigation") 
+    "address": "<human readable address, approximate is fine>", 
+    "severity": "low" | "med" | "high", 
+    "context": "<relevant transcript>"
+}, {...}, ...],
+
+}, {...}, ...],
+
+    "remaining_facts": [str]
+}
+"""
+
 
 USE_ONNX = True
 silero_model, utils = torch.hub.load(
@@ -53,6 +71,36 @@ audio_file_sender_port = 12345
 
 # only this one does
 audio_file_receiver_port = 5555
+
+
+def convert_to_lat_long(
+    address_query: str,
+    static_longitude: float = -118.2518,
+    static_latitude: float = 34.0488,
+) -> Location | None:
+    url = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json"
+    params = {
+        "input": address_query,  # example: "13702 Hoover Street",
+        "fields": "formatted_address,name,geometry",
+        "inputtype": "textquery",
+        "locationbias": f"circle:50000@{static_latitude},{static_longitude}",
+        "key": environ["MAPS_API_KEY"],
+    }
+
+    response = requests.get(url, params=params)
+
+    if response.status_code == 200:
+        data = response.json()
+        candidate = data["candidates"][0]
+        return Location(
+            address=candidate["formatted_address"],
+            raw_address=address_query,
+            name=candidate["name"],
+            latitude=candidate["geometry"]["location"]["lat"],
+            longitude=candidate["geometry"]["location"]["lng"],
+        )
+    else:
+        print(f"Error: {response.status_code}")
 
 
 def complete_chat(
@@ -225,6 +273,9 @@ def transcribe_packets(
                 curr_section.end = current_time
                 finished[-1] = curr_section
                 transcript_queue.put(curr_section)
+                print(
+                    f"{curr_section.content} ({curr_section.start} - {curr_section.end})"
+                )
                 curr_section = TranscriptSection(content="", start=None, end=None)
                 finished.append(curr_section)
                 last_time = None
@@ -232,11 +283,6 @@ def transcribe_packets(
                 curr_section.content = text
                 curr_section.end = current_time
                 finished[-1] = curr_section
-
-            os.system("cls" if os.name == "nt" else "clear")
-            for line in finished:
-                print(f"{line.content} ({line.start} - {line.end})")
-            print("", end="", flush=True)
 
         sleep(0.25)
 
@@ -253,6 +299,7 @@ def upsert_alert(alert: Alert):
             "coord": alert.coord,
         }
     )
+    print(f"UPSERTED {alert}")
 
 
 def process_events(transcript_queue: Queue[TranscriptSection]):
@@ -276,36 +323,61 @@ def process_events(transcript_queue: Queue[TranscriptSection]):
 
                 context += f"\n{item.content}"
 
-                print(f"Processing {item}")
+                try:
+                    completion = complete(
+                        system_prompt=SYSTEM_PROMPT, user_prompt=context
+                    )
+                    print(f"{completion=}")
+                    d = json.loads(completion)
+                    context = "\n".join(d["context"])
+                    events = d["events"]
+                    alerts = []
+                    for event in events:
+                        label = event["alert"]
+                        date = time()
+                        transcript = TranscriptSection(
+                            content=event["content"],
+                            start=time() - random.randint(20, 30),
+                            end=time() - random.randint(5, 15),
+                        )
+
+                        raw_address = event["address"]
+
+                        location = convert_to_lat_long(raw_address)
+
+                        if not location:
+                            continue
+
+                        coord = (location.latitude, location.longitude)
+                        name = location.name
+                        address = location.address
+
+                        severity = (
+                            Severity.HIGH
+                            if d["severity"] == "high"
+                            else Severity.LOW
+                            if d["severity"] == "low"
+                            else Severity.MEDIUM
+                        )
+
+                        alert = Alert(
+                            label=label,
+                            date=date,
+                            severity=severity,
+                            raw_address=raw_address,
+                            transcript=[transcript],
+                            address=address,
+                            name=name,
+                            coord=coord,
+                        )
+
+                        upsert_alert(alert)
+
+                except Exception as e:
+                    print(e)
+                    continue
+
         sleep(0.25)
-    """
-    { alerts: [{
-        id: “1”
-        severity: “medium”,    name: “Aggravated Assault at Pioneer Hall”
-        coord: [44.9704, 93.2290]
-        address: “615 Fulton St SE, Minneapolis, MN 55455”    date: Tue April 23 2023 18:50:21 GMT-0500
-        summary: “Victim was outside, walking down Fulton
-                St Se when a male suspect fired a BB gun
-                from a 3rd story window at Pioneer Hall.
-                Victim was struck face.”
-        }, {
-        id: “2”
-        severity: “fire”,    name: “Fire at Pauley Pavilion”
-        coord: [34.070313,-118.446938]
-        address: “301 Westwood Plaza, Los Angeles, CA 90095”    date: Tue April 23 2023 23:13:43 GMT-0500
-        summary: “Random turkeys appeared on campus and started
-                setting everything on fire.”
-        }, {
-        id: “3”
-        severity: “high”,    name: “Shooting at XYZ”
-        coord: [21.312, 74.232]
-        address: “Kenneth H. Keller Hall, 200 Union St SE,
-                Minneapolis, MN 55455”    date: Tue April 24 2023 19:30:10 GMT-0500
-        summary: “Shooting reported at XYZ. 2 Injured, suspect
-                wearing black vest.”
-        }]
-    }
-    """
 
 
 def main():
