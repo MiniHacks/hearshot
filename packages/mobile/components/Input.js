@@ -8,6 +8,7 @@ export default function Input({
   keyboardType,
   placeholder = "",
   state,
+  ...props
 }) {
   return (
     <View style={{ display: "flex", justifyContent: "flex-start" }}>
@@ -20,6 +21,7 @@ export default function Input({
         onChangeText={onChange}
         value={state}
         keyboardType={keyboardType}
+        {...props}
       />
     </View>
   );

@@ -1,8 +1,12 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-export default function Tag({ filter }) {
+export default function Tag({ filter, onDelete }) {
+  const handleDelete = () => {
+    onDelete(filter);
+  };
+
   return (
     <View
       style={{
@@ -19,11 +23,13 @@ export default function Tag({ filter }) {
         margin: 6,
       }}
     >
-      <MaterialCommunityIcons
-        name={"window-close"}
-        color={"#BDB5E5"}
-        size={16}
-      />
+      <TouchableOpacity onPress={handleDelete}>
+        <MaterialCommunityIcons
+          name={"window-close"}
+          color={"#BDB5E5"}
+          size={16}
+        />
+      </TouchableOpacity>
       <Text style={{ color: "#BDB5E5", marginHorizontal: 4 }}>{filter}</Text>
     </View>
   );
