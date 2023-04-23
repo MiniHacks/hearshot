@@ -62,6 +62,17 @@ __pycache__
 packages/io/dist/
 **/dist/**
 
+env 
+
+*.wav
+*.ass
+*.mp3
+*.srt
+*.tsv
+*.txt
+*.vtt
+
+settings.json
 **/service-account.json
 
 .idea/httpRequests/
