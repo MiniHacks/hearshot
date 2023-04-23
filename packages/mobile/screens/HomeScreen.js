@@ -1,31 +1,11 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import {
-  Button,
-  Keyboard,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import ButtonTransparent from "../components/ButtonTransparent";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Keyboard, View } from "react-native";
 import notifee from "@notifee/react-native";
-import * as Location from "expo-location";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
 import Map from "../components/Map";
-import BottomSheet from "@gorhom/bottom-sheet";
-import Notification from "../components/Notification";
 import TopLinearGradient from "../components/TopLinearGradient";
 import BottomDrawer from "../components/BottomDrawer";
+import NumberOfAlerts from "../components/NumberOfAlerts";
+import { NavBar } from "../components/NavBar";
 
 export default function HomeScreen({ navigation }) {
   useEffect(() => {
@@ -43,22 +23,6 @@ export default function HomeScreen({ navigation }) {
   }, []);
 
   const mapRef = useRef(null);
-
-  const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
-
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-      console.log("Location", location);
-    })();
-  }, []);
 
   async function onDisplayNotification() {
     // Request permissions (required for iOS)
@@ -99,60 +63,8 @@ export default function HomeScreen({ navigation }) {
     >
       <Map ref={mapRef} snapTo={snapTo} setActiveAlert={setActiveAlert} />
       <TopLinearGradient />
-      <SafeAreaView
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          width: "100%",
-          paddingHorizontal: 16,
-          // top: 0,
-          // zIndex: 1,
-        }}
-      >
-        <ButtonTransparent
-          hexBorder={"#FFFFFF"}
-          rgbFill={"rgba(255, 255, 255, 0.1)"}
-          iconName={"cog-outline"}
-          onPress={() =>
-            navigation.navigate("Settings", { location: location })
-          }
-        />
-        <Pressable
-          style={{
-            flexDirection: "row",
-            color: "white",
-          }}
-        >
-          <MaterialCommunityIcons
-            name="home-outline"
-            color="#8269E3"
-            size={24}
-          />
-          <Text style={{ fontSize: 20, color: "white", marginHorizontal: 8 }}>
-            My Location
-          </Text>
-        </Pressable>
-        <ButtonTransparent
-          hexBorder={"#FF2F0E"}
-          rgbFill={"rgba(255, 47, 14, 0.1)"}
-          iconName={"radio-tower"}
-          onPress={onDisplayNotification}
-        />
-      </SafeAreaView>
-
-      <SafeAreaView
-        style={{
-          position: "absolute",
-          bottom: 0,
-          width: "100%",
-          alignItems: "center",
-        }}
-        pointerEvents={"none"}
-      >
-        <Text style={styles.text}>5 recent alerts in this area</Text>
-      </SafeAreaView>
+      <NavBar navigation={navigation} onLiveClick={onDisplayNotification} />
+      <NumberOfAlerts />
       <BottomDrawer
         ref={bottomSheetRef}
         alert={activeAlert}
@@ -162,21 +74,3 @@ export default function HomeScreen({ navigation }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  text: {
-    color: "#C7C7C7",
-    marginVertical: 8,
-    fontSize: 16,
-  },
-  sheet: {
-    backgroundColor: "#151515FF",
-  },
-  handle: {
-    width: "40%",
-    backgroundColor: "#2E2D2DFF",
-  },
-  content: {
-    paddingHorizontal: 24,
-  },
-});

@@ -23,26 +23,20 @@ function MyStack() {
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
-        gestureEnabled: false,
+        gestureEnabled: true,
       }}
     >
       <Stack.Screen
         name="Splash"
         component={SplashScreen}
-        options={{ cardStyleInterpolator: forFade }}
+        options={{ cardStyleInterpolator: forFade, gestureEnabled: false }}
       />
       <Stack.Screen
         name="Home"
         component={HomeScreen}
-        options={{ cardStyleInterpolator: forFade }}
+        options={{ cardStyleInterpolator: forFade, gestureEnabled: false }}
       />
-      <Stack.Screen
-        name="Settings"
-        component={SettingsScreen}
-        options={{
-          gestureEnabled: true,
-        }}
-      />
+      <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="Notifications" component={NotificationScreen} />
       <Stack.Screen name="Filters" component={FilterScreen} />
     </Stack.Navigator>

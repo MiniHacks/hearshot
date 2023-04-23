@@ -41,26 +41,24 @@ const supportSections = [
 ];
 
 export default function SettingsScreen({ route, navigation }) {
-  const { location } = route.params;
   return (
     <View style={styles.container}>
       <Breadcrumb navigation={navigation} pageName={"Settings"} />
 
       <Text style={styles.heading}>General</Text>
       {generalSections.map((section, index) => (
-        <>
+        <View key={section.title}>
           <Section
-            key={section.title}
             title={section.title}
             subtitle={section.subtitle}
             iconName={section.iconName}
             link={section.link}
-            onPress={() => navigation.navigate(section.link, { location })}
+            onPress={() => navigation.navigate(section.link)}
           />
           {index !== generalSections.length - 1 && (
             <View style={styles.hr}></View>
           )}
-        </>
+        </View>
       ))}
       <Text style={styles.heading}>Support us</Text>
       {supportSections.map((section, index) => (
