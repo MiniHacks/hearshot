@@ -10,6 +10,7 @@ import SplashScreen from "./screens/SplashScreen";
 import NotificationScreen from "./screens/NotificationScreen";
 import FilterScreen from "./screens/FilterScreen";
 import messaging from "@react-native-firebase/messaging";
+import firestore from "@react-native-firebase/firestore";
 
 const Stack = createStackNavigator();
 
@@ -69,6 +70,18 @@ export default function App() {
       console.log("FCM Token:", fcmToken);
 
       await messaging().subscribeToTopic("alerts");
+
+      // updadte firestore with token
+      await firestore()
+        .collection("tokens")
+        .doc("alerts")
+        .set(
+          {
+            // array union
+            tokens: firestore.FieldValue.arrayUnion(fcmToken),
+          },
+          { merge: true }
+        );
     }
     requestTokens();
   }, []);

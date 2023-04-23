@@ -22,17 +22,6 @@ import Input from "../components/Input";
 
 const phoneUtil = PNF.PhoneNumberUtil.getInstance();
 
-async function requestUserPermission() {
-  const authStatus = await messaging().requestPermission();
-  const enabled =
-    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-    authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
-  if (enabled) {
-    console.log("Authorization status:", authStatus);
-  }
-}
-
 const logoHeight = 150;
 const logoWidth = (1580 / 802) * logoHeight;
 export default function SplashScreen({ navigation }) {
@@ -59,9 +48,6 @@ export default function SplashScreen({ navigation }) {
       // In this function, make sure you hide the component(s) for entering the code and/or navigate away from this screen.
       // It is also recommended to display a message to the user informing him/her that he/she has successfully logged in.
       console.log("user logged in");
-      await requestUserPermission();
-      navigation.navigate("Home");
-      console.log(await messaging().getToken());
     } else {
       console.log("user logged out");
       setConfirm(null);
