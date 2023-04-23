@@ -7,11 +7,32 @@ import BottomDrawer from "../components/BottomDrawer";
 import NumberOfAlerts from "../components/NumberOfAlerts";
 import { NavBar } from "../components/NavBar";
 import { distance } from "../lib/distance";
+import Notification from "../components/Notification";
+import firestore from "@react-native-firebase/firestore";
 
 export default function HomeScreen({ navigation }) {
   useEffect(() => {
     Keyboard.dismiss();
   }, [navigation]);
+
+  // get alerts from database and then set them to state
+  const [alerts, setAlerts] = useState([]);
+  useEffect(() => {
+    const subscriber = firestore()
+      .collection("alerts")
+      .onSnapshot((collectionSnapshot) => {
+        const alerts = collectionSnapshot.docs.map((doc) => {
+          return {
+            ...doc.data(),
+            key: doc.id,
+          };
+        });
+        setAlerts(alerts);
+      });
+
+    // Stop listening for updates when no longer required
+    return () => subscriber();
+  }, []);
 
   // ref
   const bottomSheetRef = useRef(null);
@@ -67,7 +88,7 @@ export default function HomeScreen({ navigation }) {
         setAlert={setActiveAlert}
       >
         {activeAlert != null && (
-          <View style={styles.content}>
+          <View style={{ paddingHorizontal: 24 }}>
             <Notification
               tagline={activeAlert.name}
               location={activeAlert.address}
