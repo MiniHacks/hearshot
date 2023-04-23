@@ -192,7 +192,7 @@ export default function HomeScreen({ navigation }) {
         backgroundStyle={styles.sheet}
         handleIndicatorStyle={styles.handle}
         ref={bottomSheetRef}
-        index={0}
+        index={-1}
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
         enablePanDownToClose
