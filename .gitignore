@@ -73,3 +73,6 @@ env
 *.vtt
 
 settings.json
+**/service-account.json
+
+.idea/httpRequests/
