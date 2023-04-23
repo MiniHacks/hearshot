@@ -3,7 +3,7 @@ from typing import Any, Dict
 import torch
 import whisper
 
-model = "small.en"
+model = "medium.en"
 audio_model = whisper.load_model(model)
 
 
