@@ -25,11 +25,9 @@ flowchart TD
     
     bcast -- Hobbyist-maintained stream of police chatter --> gst;
     gst -- Conversion from an `application/x-icy` stream to 16xHz S16LE audio samples --> udp_bcast;
-    udp_bcast --> udp_transcribe;
+
   end;
-  
-  udp_police --> udp_transcribe;
- 
+
   
   
   subgraph a[Transcription Service];
@@ -42,6 +40,11 @@ flowchart TD
     whisper -- transcribed audio --> claude;
     claude -- post-processed events the user should know about --> firebase;
   end;
+  
+    udp_bcast --> udp_transcribe;
+  udp_police --> udp_transcribe;
+ 
+
   
   ios[iOS App];
   firebase-->ios;
